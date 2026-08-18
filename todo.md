@@ -212,3 +212,14 @@
 
 - [x] Add mocked localStorage and matchMedia tests for system-theme changes, persistence, and DOM class synchronization.
 - [x] Define and test a guaranteed contrast-safe pressed-state text token for appearance controls.
+
+# Workspace Contrast Fix
+
+- [x] Fix unreadable workspace text on dark surfaces by applying guaranteed white text to sidebar, top bar, saved-analysis, and supporting labels.
+- [x] Verify workspace contrast in dark/light themes at desktop/mobile sizes, tests, and production build.
+
+# Workspace Contrast Evidence Follow-up
+
+- [x] Add explicit dark/light contrast rules for workspace sidebar, top bar, saved-analysis entries, and supporting labels.
+- [x] Add selector-level regression assertions for the affected workspace surfaces.
+- [x] Capture workspace screenshots for both dark and light themes at desktop and mobile breakpoints.

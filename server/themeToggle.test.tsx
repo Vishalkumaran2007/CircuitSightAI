@@ -76,6 +76,14 @@ describe("CircuitSight theme toggle", () => {
     expect(css).toContain("--text-inverse: #000000");
     expect(css).toContain("--text-inverse: #FFFFFF");
     expect(css).toContain(".light-theme .button-acid");
+    expect(css).toContain(".light-theme .new-analysis");
+    expect(css).toContain(".light-theme .composer-send");
+    expect(css).toContain(".light-theme .workspace-mark");
+    expect(css).toContain(".dark .workspace-sidebar, .dark .workspace-topbar");
+    expect(css).toContain(".dark .workspace-nav-label");
+    expect(css).toContain(".light-theme .workspace-sidebar, .light-theme .workspace-topbar");
+    expect(css).toContain(".light-theme .workspace-nav-label");
+    expect(css).toContain("color: #FFFFFF");
     expect(css).toContain(".light-theme .hero-stamp");
     expect(css).toContain(".section-dark { background: var(--surface-0)");
     expect(css).toContain("background: var(--surface-1)");

@@ -19,6 +19,14 @@
 .light-theme body, .light-theme .site-shell, .light-theme .section-dark, .light-theme .hero-readout, .light-theme .analysis-panel, .light-theme .loop-node { background: #FFFFFF; color: #000000; }
 .light-theme .topbar, .light-theme .nav-links { background: rgba(255,255,255,.96); }
 .light-theme .hero { background: radial-gradient(circle at 78% 40%, rgba(0,0,0,.07), transparent 24%); }
+.light-theme .new-analysis, .light-theme .composer-send, .light-theme .dashboard-card-acid { color: #FFFFFF; }
+.light-theme .new-analysis span, .light-theme .dashboard-card-acid > span, .light-theme .dashboard-card-acid > a { color: #FFFFFF; }
+.light-theme .workspace-mark { color: #FFFFFF; }
+.light-theme .theme-toggle:hover { color: #FFFFFF; }
+.dark .workspace-sidebar, .dark .workspace-topbar { color: #FFFFFF; }
+.dark .workspace-nav-label, .dark .thread, .dark .thread small, .dark .workspace-account strong, .dark .workspace-account small, .dark .workspace-topbar .mono, .dark .workspace-confidence, .dark .workspace-composer-note { color: #FFFFFF; }
+.light-theme .workspace-sidebar, .light-theme .workspace-topbar { color: #000000; }
+.light-theme .workspace-nav-label, .light-theme .thread, .light-theme .thread small, .light-theme .workspace-account strong, .light-theme .workspace-account small, .light-theme .workspace-topbar .mono, .light-theme .workspace-confidence, .light-theme .workspace-composer-note { color: #000000; }
 .light-theme .hero-lede, .light-theme .process-head p, .light-theme .learning-lede { color: #333333; }
 .light-theme .marquee-dark { background: #000000; color: #FFFFFF; }
 .light-theme .learning-graphic { background: #FFFFFF; }
