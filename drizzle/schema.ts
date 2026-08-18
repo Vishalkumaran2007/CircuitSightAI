@@ -63,5 +63,23 @@ export const circuitMessages = mysqlTable("circuit_messages", {
   index("circuit_messages_user_idx").on(table.userId),
 ]);
 
+export const circuitFeedback = mysqlTable("circuit_feedback", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  threadId: int("threadId").notNull(),
+  messageId: int("messageId"),
+  feedbackType: mysqlEnum("feedbackType", ["correction", "confirmation", "clarification"]).notNull(),
+  correctionText: text("correctionText").notNull(),
+  evidenceNotes: text("evidenceNotes"),
+  reviewStatus: mysqlEnum("reviewStatus", ["pending", "accepted", "rejected"]).default("pending").notNull(),
+  sourceCheckNotes: text("sourceCheckNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, table => [
+  index("circuit_feedback_user_idx").on(table.userId),
+  index("circuit_feedback_thread_idx").on(table.threadId),
+]);
+
 export type CircuitThread = typeof circuitThreads.$inferSelect;
 export type CircuitMessage = typeof circuitMessages.$inferSelect;
+export type CircuitFeedback = typeof circuitFeedback.$inferSelect;
+export type InsertCircuitFeedback = typeof circuitFeedback.$inferInsert;

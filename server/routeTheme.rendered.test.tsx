@@ -1,5 +1,7 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import TestRenderer, { act } from "react-test-renderer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ThemeProvider, useTheme } from "../client/src/contexts/ThemeContext";
@@ -12,6 +14,7 @@ import Profile from "../client/src/pages/Profile";
 import Settings from "../client/src/pages/Settings";
 import Help from "../client/src/pages/Help";
 import SwitchAccount from "../client/src/pages/SwitchAccount";
+import VisualSignal from "../client/src/pages/VisualSignal";
 import { AppearanceLayer } from "../client/src/App";
 
 const routeState = vi.hoisted(() => ({ path: "/" }));
@@ -32,6 +35,10 @@ vi.mock("@/lib/trpc", () => ({
       listThreads: { useQuery: () => ({ data: [], refetch: () => undefined, isLoading: false }) },
       getThread: { useQuery: () => ({ data: null, isLoading: false }) },
       analyze: { useMutation: () => ({ mutateAsync: async () => undefined, isPending: false, error: null }) },
+      submitFeedback: { useMutation: () => ({ mutate: () => undefined, isPending: false }) },
+    },
+    help: {
+      chat: { useMutation: () => ({ mutate: () => undefined, isPending: false }) },
     },
     preferences: {
       get: { useQuery: () => ({ data: { explanationLevel: "intermediate", responseStyle: "balanced", sarcasmEnabled: false, technicalTerminology: true, preferVisuals: true, suggestImprovements: true }, isLoading: false }) },
@@ -56,6 +63,7 @@ const routes = [
   { name: "settings", Component: Settings, marker: "account-page", text: "WORKBENCH" },
   { name: "help", Component: Help, marker: "account-page", text: "TRACE" },
   { name: "switch-account", Component: SwitchAccount, marker: "account-page", text: "SWITCH" },
+  { name: "visual-signal", Component: VisualSignal, marker: "account-page", text: "SIGNAL" },
 ] as const;
 
 describe("route theme rendering", () => {
@@ -79,12 +87,26 @@ describe("route theme rendering", () => {
     }
   }
 
+  it("renders Help chat and Visual Signal responsive surfaces", () => {
+    const helpMarkup = renderToStaticMarkup(<ThemeProvider defaultTheme="dark" switchable><Help /></ThemeProvider>);
+    const signalMarkup = renderToStaticMarkup(<ThemeProvider defaultTheme="dark" switchable><VisualSignal /></ThemeProvider>);
+    const css = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
+    expect(helpMarkup).toContain("WEBSITE SUPPORT");
+    expect(helpMarkup).toContain("help-grid");
+    expect(signalMarkup).toContain("visual-signal-layout");
+    expect(signalMarkup).toContain("palette-grid");
+    expect(css).toContain(".help-grid, .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(css).toContain(".preference-layout, .settings-grid, .help-grid, .profile-grid { grid-template-columns: 1fr; }");
+    expect(css).toContain(".visual-signal-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(css).toContain("@media (max-width: 760px) { .visual-signal-layout { grid-template-columns: 1fr;");
+  });
+
   it("renders home and workspace appearance controls through the app shell", () => {
     routeState.path = "/";
     const originalDocument = globalThis.document;
     const keyListeners: Array<(event: { key: string }) => void> = [];
     Object.defineProperty(globalThis, "document", { configurable: true, value: {
-      documentElement: { classList: { toggle: () => undefined } },
+      documentElement: { classList: { toggle: () => undefined, add: () => undefined, remove: () => undefined } },
       addEventListener: (_type: string, listener: (event: { key: string }) => void) => keyListeners.push(listener),
       removeEventListener: () => undefined,
     } });
@@ -105,7 +127,7 @@ describe("route theme rendering", () => {
     act(() => {
       renderer = TestRenderer.create(<ThemeProvider defaultTheme="dark" switchable><AppearanceLayer /></ThemeProvider>);
     });
-    expect(renderer!.root.findAllByType("button")).toHaveLength(3);
+    expect(renderer!.root.findAllByType("button")).toHaveLength(0);
     expect(renderer!.root.findAllByProps({ className: "theme-dropdown-trigger theme-toggle" })).toHaveLength(0);
     renderer!.unmount();
   });

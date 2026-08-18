@@ -32,8 +32,12 @@ const circuitAnalysisResponseFormat = {
         findings: { type: "array", items: circuitFindingSchema },
         recommendedSteps: { type: "array", items: { type: "string" } },
         uncertaintyNotice: { type: "string" },
+        currentPath: { type: "string" },
+        signalPath: { type: "string" },
+        faultTrace: { type: "string" },
+        visualGuidance: { type: "array", items: { type: "string" } },
       },
-      required: ["summary", "diagnosis", "confidence", "findings", "recommendedSteps", "uncertaintyNotice"],
+      required: ["summary", "diagnosis", "confidence", "findings", "recommendedSteps", "uncertaintyNotice", "currentPath", "signalPath", "faultTrace", "visualGuidance"],
       additionalProperties: false,
     },
   },
@@ -57,6 +61,10 @@ type CircuitAnalysis = {
   findings: Array<{ label: string; status: string; confidence: number; detail: string }>;
   recommendedSteps: string[];
   uncertaintyNotice: string;
+  currentPath: string;
+  signalPath: string;
+  faultTrace: string;
+  visualGuidance: string[];
 };
 
 const formatIdkResponse = (analysis: CircuitAnalysis, question?: string) => {
@@ -78,7 +86,11 @@ const formatIdkResponse = (analysis: CircuitAnalysis, question?: string) => {
   const recommendations = analysis.recommendedSteps.length
     ? `If you’re testing this physically, I’d start with ${analysis.recommendedSteps[0].toLowerCase()}${analysis.recommendedSteps.length > 1 ? ` Then I’d also ${analysis.recommendedSteps.slice(1).join(" Also, ").toLowerCase()}` : ""}`
     : "I’d take a clearer, top-down photo before making a physical correction.";
-  return `${greeting}\n\n${analysis.summary}\n\nHere’s what I think is happening: ${analysis.diagnosis}\n\n${findings}\n\n${confidence}\n\n${analysis.uncertaintyNotice}\n\n${recommendations}\n\nWant me to trace the current path step-by-step?`;
+  const currentPath = analysis.currentPath || "A current path could not be established from the supplied evidence.";
+  const signalPath = analysis.signalPath || "A signal path could not be established from the supplied evidence.";
+  const faultTrace = analysis.faultTrace || "No fault trace was confirmed beyond the findings above.";
+  const visualGuidance = (analysis.visualGuidance ?? []).length ? `\n\nVisual guidance: ${(analysis.visualGuidance ?? []).join(" ")}` : "";
+  return `${greeting}\n\n${analysis.summary}\n\nHere’s what I think is happening: ${analysis.diagnosis}\n\n${findings}\n\nCurrent path: ${currentPath}\n\nSignal path: ${signalPath}\n\nFault trace: ${faultTrace}\n\n${confidence}\n\n${analysis.uncertaintyNotice}\n\n${recommendations}${visualGuidance}\n\nWant me to trace the current path step-by-step?`;
 };
 
 export const appRouter = router({
@@ -104,6 +116,26 @@ export const appRouter = router({
       suggestImprovements: z.boolean(),
     })).mutation(({ ctx, input }) => db.upsertIdkPreferences(ctx.user.id, input)),
   }),
+  help: router({
+    chat: protectedProcedure.input(z.object({
+      messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(4000) })).max(12),
+    })).mutation(async ({ input }) => {
+      const transcript = input.messages.map(message => `${message.role.toUpperCase()}: ${message.content}`).join("\\n\\n");
+      const response = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: "You are IDK Support, the website-help assistant for IDK (Intelligent Diagnostic Kernel). Answer only questions about this website's navigation, account routes, workspace workflow, uploads, saved analyses, correction reports, Personalization / TUNE THE KERNEL, Visual Signal palettes, appearance modes, accessibility, authentication, and learning-loop concepts. Use the conversation context. Be concise, practical, and specific. If the user asks you to diagnose a circuit, interpret a schematic, or solve an electronics problem, do not analyze it here: explain that the Help assistant is for website workflows and direct them to /workspace to ask IDK. Never invent a feature that is not described in the question or the product context. Do not request passwords, OAuth tokens, or sensitive circuit data.",
+          },
+          { role: "user", content: `Website-help conversation:\\n${transcript}` },
+        ],
+        maxTokens: 700,
+      });
+      const content = getTextContent(response.choices[0]?.message?.content).trim();
+      if (!content) throw new Error("The help service returned an empty response.");
+      return { content };
+    }),
+  }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -120,6 +152,13 @@ export const appRouter = router({
       const messages = await db.listCircuitMessages(ctx.user.id, input.threadId);
       return { thread, messages };
     }),
+    submitFeedback: protectedProcedure.input(z.object({
+      threadId: z.number().int().positive(),
+      messageId: z.number().int().positive().optional(),
+      feedbackType: z.enum(["correction", "confirmation", "clarification"]),
+      correctionText: z.string().trim().min(3).max(4000),
+      evidenceNotes: z.string().trim().max(4000).optional(),
+    })).mutation(({ ctx, input }) => db.addCircuitFeedback({ ...input, userId: ctx.user.id, evidenceNotes: input.evidenceNotes || null, messageId: input.messageId ?? null })),
     analyze: protectedProcedure
       .input(z.object({
         threadId: z.number().int().positive().optional(),
@@ -151,7 +190,7 @@ export const appRouter = router({
         const content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string; detail: "high" } }> = [
           {
             type: "text",
-            text: `Analyze this electronics circuit as IDK, the Intelligent Diagnostic Kernel.\n\nUser question: ${input.question || "Please inspect the uploaded circuit image."}\n\nConversation context from this thread:\n${conversationContext || "No earlier context."}\n\nUser preferences: explanation level=${preferences.explanationLevel}; response style=${preferences.responseStyle}; technical terminology=${preferences.technicalTerminology ? "preferred" : "avoid"}; visual explanations=${preferences.preferVisuals ? "preferred" : "not requested"}; circuit improvement suggestions=${preferences.suggestImprovements ? "enabled" : "disabled"}; sarcasm=${preferences.sarcasmEnabled ? "allowed sparingly" : "disabled"}.\n\nReturn only the requested structured response. Identify visible components and connections, distinguish evidence from inference, adapt vocabulary and detail to the preferences, ask for clarification in the uncertainty notice when additional information would materially improve the diagnosis, and never claim a connection is verified when it is obscured or ambiguous. Recommend safe, low-risk inspection steps. Do not instruct the user to energize an uncertain circuit.`,
+            text: `Analyze this electronics circuit as IDK, the Intelligent Diagnostic Kernel.\n\nUser question: ${input.question || "Please inspect the uploaded circuit image."}\n\nConversation context from this thread:\n${conversationContext || "No earlier context."}\n\nUser preferences: explanation level=${preferences.explanationLevel}; response style=${preferences.responseStyle}; technical terminology=${preferences.technicalTerminology ? "preferred" : "avoid"}; visual explanations=${preferences.preferVisuals ? "preferred" : "not requested"}; circuit improvement suggestions=${preferences.suggestImprovements ? "enabled" : "disabled"}; sarcasm=${preferences.sarcasmEnabled ? "allowed sparingly" : "disabled"}.\n\nReturn only the requested structured response. Identify visible components and connections, distinguish evidence from inference, adapt vocabulary and detail to the preferences, ask for clarification in the uncertainty notice when additional information would materially improve the diagnosis, and never claim a connection is verified when it is obscured or ambiguous. For large or complex schematics and PCB layouts, partition the board into functional blocks, name the inspected region, trace current and signal paths only where supported by visible topology, and describe a fault trace from evidence to hypothesis. Populate visualGuidance with concrete, non-fabricated suggestions such as which node or region should be annotated, highlighted, or compared. Recommend safe, low-risk inspection steps. Do not instruct the user to energize an uncertain circuit.`,
           },
         ];
         if (input.imageDataUrl) {
@@ -162,7 +201,7 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: "You are IDK (Intelligent Diagnostic Kernel), a friendly adaptive electronics diagnostic assistant. Maintain continuity with the provided thread context. Observe, understand, explain, diagnose, recommend, ask clarifying questions when evidence is insufficient, and engage conversationally. Return the requested structured JSON, but ground every statement in visible circuit data and user-provided information. Adapt terminology and detail to the user preferences. Use subtle wit only when permitted and never when it compromises technical accuracy or safety. Never invent components, connections, measurements, voltage, current, resistance, or electrical behavior. Support simple and complex circuit reasoning, current-path and signal-path explanations, fault tracing, schematics, breadboards, PCB layouts, analog, digital, and mixed-signal contexts when the supplied evidence supports them. If the image is blurry, incomplete, or cannot establish electrical continuity, say so explicitly.",
+              content: "You are IDK (Intelligent Diagnostic Kernel), a friendly adaptive electronics diagnostic assistant. Maintain continuity with the provided thread context. Observe, understand, explain, diagnose, recommend, ask clarifying questions when evidence is insufficient, and engage conversationally. Return the requested structured JSON, but ground every statement in visible circuit data and user-provided information. Adapt terminology and detail to the user preferences. Use subtle wit only when permitted and never when it compromises technical accuracy or safety. Never invent components, connections, measurements, voltage, current, resistance, or electrical behavior. Support simple and complex circuit reasoning, current-path and signal-path explanations, fault tracing, schematics, breadboards, PCB layouts, analog, digital, and mixed-signal contexts when the supplied evidence supports them. For a dense image, reason in regions and state what was not inspected or cannot be resolved. If the image is blurry, incomplete, or cannot establish electrical continuity, say so explicitly.",
             },
             { role: "user", content },
           ],

@@ -18,10 +18,13 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 import SwitchAccount from "./pages/SwitchAccount";
+import VisualSignal from "./pages/VisualSignal";
 
 export function AppearanceLayer() {
   const [location] = useLocation();
-  return <ThemeToggle homeDropdown={location === "/"} />;
+  if (location === "/") return <ThemeToggle homeDropdown={location === "/"} />;
+  if (location === "/visual-signal") return <ThemeToggle />;
+  return null;
 }
 
 function Router() {
@@ -38,6 +41,7 @@ function Router() {
       <Route path="/settings" component={Settings} />
       <Route path="/help" component={Help} />
       <Route path="/switch-account" component={SwitchAccount} />
+      <Route path="/visual-signal" component={VisualSignal} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

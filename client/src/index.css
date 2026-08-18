@@ -334,3 +334,40 @@
 .switch-account-current small { color: var(--muted); font: 10px/1.2 "Monaspace Krypton"; margin-top: 4px; }
 .switch-account-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 @media (max-width: 760px) { .account-topnav { display: none; } .account-hero { padding: 62px 20px 30px; } .account-content { padding: 0 20px 58px; } .preference-layout, .settings-grid, .help-grid, .profile-grid { grid-template-columns: 1fr; } .preference-panel-wide, .help-card-wide, .profile-note { grid-column: auto; } .preference-checks { grid-template-columns: 1fr; } .account-popover { width: min(238px, calc(100vw - 36px)); } .account-menu:not(.account-menu-compact) .account-popover { left: auto; right: 0; } .account-hero h1 { font-size: clamp(54px, 17vw, 88px); } .account-hero p { font-size: 14px; } .profile-identity { align-items: flex-start; } }
+
+/* Visual Signal palette combinations */
+.dark.palette-lavender { --acid: #C4B5FD; --acid-rgb: 196,181,253; }
+.light-theme.palette-lavender { --acid: #000000; --acid-rgb: 0,0,0; }
+.dark.palette-cyan { --acid: #67E8F9; --acid-rgb: 103,232,249; }
+.light-theme.palette-cyan { --acid: #0369A1; --acid-rgb: 3,105,161; }
+.dark.palette-amber { --acid: #FBBF24; --acid-rgb: 251,191,36; }
+.light-theme.palette-amber { --acid: #92400E; --acid-rgb: 146,64,14; }
+.dark.palette-mint { --acid: #86EFAC; --acid-rgb: 134,239,172; }
+.light-theme.palette-mint { --acid: #047857; --acid-rgb: 4,120,87; }
+.palette-cyan .theme-toggle, .palette-amber .theme-toggle, .palette-mint .theme-toggle { box-shadow: 0 0 22px rgba(var(--acid-rgb), .14); }
+.palette-cyan .account-popover, .palette-amber .account-popover, .palette-mint .account-popover { box-shadow: 8px 8px 0 var(--acid); }
+
+/* Visual Signal page */
+.visual-signal-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.visual-signal-card { border: 2px solid var(--border); background: var(--surface-1); padding: 24px; }
+.visual-signal-wide { grid-column: 1 / -1; }
+.visual-signal-heading { display: flex; align-items: center; gap: 9px; color: var(--acid); }
+.visual-signal-heading .mono { color: var(--muted); font-size: 9px; }
+.visual-signal-card h2 { font: 700 28px/.95 "Space Grotesk"; letter-spacing: -.05em; margin: 17px 0 10px; }
+.visual-signal-card p { color: var(--muted); font: 14px/1.5 "Space Grotesk"; }
+.visual-signal-mode-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+.visual-signal-mode-grid button { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--border); background: transparent; color: var(--foreground); padding: 10px 12px; cursor: pointer; font: 700 9px/1 "Monaspace Krypton"; }
+.visual-signal-mode-grid button:hover, .visual-signal-mode-grid button[aria-pressed="true"] { border-color: var(--acid); background: var(--acid); color: var(--text-inverse); }
+.palette-grid { display: grid; gap: 8px; margin-top: 18px; }
+.palette-choice { display: flex; align-items: center; gap: 11px; border: 2px solid var(--border); background: transparent; color: var(--foreground); padding: 10px; text-align: left; cursor: pointer; }
+.palette-choice:hover, .palette-choice[aria-pressed="true"] { border-color: var(--acid); background: var(--surface-2); }
+.palette-choice > span:nth-child(2) { display: grid; gap: 4px; flex: 1; }
+.palette-choice strong { font: 700 10px/1 "Monaspace Krypton"; }
+.palette-choice small { color: var(--muted); font: 11px/1.2 "Space Grotesk"; }
+.palette-swatch { width: 42px; height: 42px; display: grid; place-items: center; border: 2px solid var(--border-strong); font: 700 18px/1 "Space Grotesk"; }
+.visual-signal-footer { grid-column: 1 / -1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 18px; padding-top: 10px; }
+@media (max-width: 760px) { .visual-signal-layout { grid-template-columns: 1fr; } .visual-signal-wide { grid-column: auto; } .visual-signal-footer { display: grid; gap: 12px; } }
+
+.message-feedback { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; border: 1px solid var(--border-strong); background: transparent; color: var(--muted); padding: 7px 9px; cursor: pointer; font: 700 9px/1 "Monaspace Krypton"; }
+.message-feedback:hover, .message-feedback:focus-visible { border-color: var(--acid); color: var(--acid); outline: none; }
+.message-feedback:disabled { cursor: default; opacity: .75; }

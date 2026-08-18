@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light";
 type ThemePreference = Theme | "system";
+export type Palette = "lavender" | "cyan" | "amber" | "mint";
 
 interface ThemeContextType {
   theme: Theme;
@@ -11,6 +12,8 @@ interface ThemeContextType {
   setPreference: (preference: ThemePreference) => void;
   highContrast: boolean;
   toggleHighContrast: () => void;
+  palette: Palette;
+  setPalette: (palette: Palette) => void;
   switchable: boolean;
 }
 
@@ -45,6 +48,11 @@ export function ThemeProvider({ children, defaultTheme = "dark", switchable = tr
     if (queryTheme === "light" || queryTheme === "yellow") return "light";
     return readStoredPreference();
   });
+  const [palette, setPaletteState] = useState<Palette>(() => {
+    if (typeof window === "undefined") return "lavender";
+    const stored = window.localStorage.getItem("circuitsight-theme-palette");
+    return stored === "cyan" || stored === "amber" || stored === "mint" ? stored : "lavender";
+  });
   const [highContrast, setHighContrast] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem("circuitsight-high-contrast") === "true";
@@ -66,19 +74,23 @@ export function ThemeProvider({ children, defaultTheme = "dark", switchable = tr
       root.classList.toggle("dark", theme === "dark");
       root.classList.toggle("light-theme", theme === "light");
       root.classList.toggle("high-contrast", highContrast);
+      if (typeof root.classList.remove === "function") root.classList.remove("palette-lavender", "palette-cyan", "palette-amber", "palette-mint");
+      if (typeof root.classList.add === "function") root.classList.add(`palette-${palette}`);
     }
     if (switchable && typeof window !== "undefined") {
       window.localStorage.setItem("circuitsight-theme-preference", preference);
       window.localStorage.setItem("circuitsight-theme", theme);
       window.localStorage.setItem("circuitsight-high-contrast", String(highContrast));
+      window.localStorage.setItem("circuitsight-theme-palette", palette);
     }
-  }, [theme, preference, highContrast, switchable]);
+  }, [theme, preference, highContrast, palette, switchable]);
 
   const toggleTheme = () => setPreferenceState(current => (current === "dark" ? "light" : "dark"));
   const setPreference = (nextPreference: ThemePreference) => setPreferenceState(nextPreference);
   const toggleHighContrast = () => setHighContrast(current => !current);
+  const setPalette = (nextPalette: Palette) => setPaletteState(nextPalette);
 
-  return <ThemeContext.Provider value={{ theme, preference, systemTheme, toggleTheme, setPreference, highContrast, toggleHighContrast, switchable }}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme, preference, systemTheme, toggleTheme, setPreference, highContrast, toggleHighContrast, palette, setPalette, switchable }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

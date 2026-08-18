@@ -268,3 +268,20 @@
 
 - [x] Add a non-invasive `?qa=message` workspace state with visible user and IDK messages for deterministic contrast screenshots.
 - [x] Capture the mobile saved-thread QA screenshot and verify the final full suite/build again.
+
+# Revised IDK Product Requirements
+
+- [x] Add a website-help AI chat experience to the Help page for product, account, settings, and workflow questions, separate from circuit diagnosis.
+- [x] Make Visual Signal a real appearance page with multiple persisted color combinations and keep Kernel Behaviour linked to Personalization.
+- [x] Hide the appearance control rail on every route except Home and Visual Signal.
+- [x] Add grounded foundations for large/complex circuit analysis and user correction learning without fabricating external verification or unsafe conclusions.
+- [x] Validate route-specific controls, Help chatbot behavior, preserved circuit analysis/reporting, responsive presentation, tests, and production build. Typecheck and tests pass; production build was attempted but the sandbox terminated Vite during chunk rendering under memory pressure.
+
+# IDK Refinement Validation Follow-up
+
+- [x] Re-run the production build in a lower-memory or fresh environment and record a successful result.
+- [x] Add explicit responsive validation coverage for the Help and Visual Signal refinements.
+
+# IDK Responsive Render Evidence
+
+- [x] Add rendered responsive checks for Help chat and Visual Signal palette layouts at desktop/mobile contracts.
