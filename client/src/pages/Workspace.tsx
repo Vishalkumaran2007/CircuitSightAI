@@ -6,9 +6,10 @@ import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
 import { SavedAnalysisHistory } from "@/components/SavedAnalysisHistory";
 import { trpc } from "@/lib/trpc";
 import { CircuitReportAnalysis } from "@/lib/circuitPdfReport";
-import { ArrowUpRight, FileImage, Loader2, LogOut, Menu, Paperclip, Plus, Send, Sparkles, X } from "lucide-react";
+import { ArrowUpRight, FileImage, Loader2, Menu, Paperclip, Plus, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
+import AccountMenu from "@/components/AccountMenu";
 
 type WorkspaceMessage = { id: number | string; role: "user" | "assistant"; content: string; attachmentName?: string | null };
 
@@ -20,7 +21,7 @@ const sampleCircuitMessages: WorkspaceMessage[] = [
 ];
 
 export default function Workspace() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading } = useAuth();
   const [, setLocation] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [draft, setDraft] = useState("");
@@ -107,15 +108,15 @@ export default function Workspace() {
   return (
     <main className="workspace-page">
       <aside className={`workspace-sidebar ${sidebarOpen ? "open" : ""}`}>
-        <div className="workspace-sidebar-head"><Link href="/dashboard" className="brand"><span className="workspace-mark">C</span><span>CIRCUITSIGHT <i>AI</i></span></Link><button className="workspace-close" onClick={() => setSidebarOpen(false)} aria-label="Close workspace menu"><X size={18} /></button></div>
+        <div className="workspace-sidebar-head"><Link href="/dashboard" className="brand"><span className="workspace-mark">I</span><span>IDK <i>INTELLIGENT DIAGNOSTIC KERNEL</i></span></Link><button className="workspace-close" onClick={() => setSidebarOpen(false)} aria-label="Close workspace menu"><X size={18} /></button></div>
         <button className="new-analysis" onClick={newAnalysis}><Plus size={16} /> NEW ANALYSIS <span className="mono">⌘ N</span></button>
         <div className="workspace-nav-label mono">YOUR ANALYSES</div>
         <SavedAnalysisHistory threads={threads} isLoading={isThreadsLoading} activeThreadId={activeThreadId} onOpenThread={openThread} />
         <div className="workspace-sample"><span className="mono">LEARNING SAMPLE / NOT SAVED</span><button type="button" onClick={openSampleDemo}>OPEN SAMPLE CIRCUIT <ArrowUpRight size={13} /></button></div>
-        <div className="workspace-sidebar-foot"><div className="workspace-account"><div className="account-avatar">{(user.name || "U").charAt(0).toUpperCase()}</div><div><strong>{user.name || "LAB USER"}</strong><small>{user.email || "SIGNED-IN ACCOUNT"}</small></div></div><button className="workspace-logout" onClick={() => logout()} aria-label="Sign out"><LogOut size={15} /></button></div>
+        <div className="workspace-sidebar-foot"><AccountMenu /></div>
       </aside>
       <div className="workspace-main">
-        <header className="workspace-topbar"><button className="workspace-menu" onClick={() => setSidebarOpen(true)} aria-label="Open workspace menu"><Menu size={19} /></button><div><span className="mono">CIRCUITSIGHT / ANALYSIS</span><strong>{isDemo ? "SAMPLE CIRCUIT DEMO" : activeThreadId ? "SAVED CIRCUIT THREAD" : "NEW CIRCUIT THREAD"}</strong></div><div className="workspace-top-status"><span className="live-dot" /> VISION READY</div></header>
+        <header className="workspace-topbar"><button className="workspace-menu" onClick={() => setSidebarOpen(true)} aria-label="Open workspace menu"><Menu size={19} /></button><div><span className="mono">IDK / ANALYSIS</span><strong>{isDemo ? "SAMPLE CIRCUIT DEMO" : activeThreadId ? "SAVED CIRCUIT THREAD" : "NEW CIRCUIT THREAD"}</strong></div><div className="workspace-top-status"><span className="live-dot" /> VISION READY</div></header>
         <section className={`workspace-conversation ${messages.length === 0 ? "empty" : ""}`}>
           {messages.length === 0 ? <div className="workspace-empty"><div className="workspace-empty-mark"><Sparkles size={28} /></div><span className="mono">INPUT FIELD / 01</span><h1>WHAT ARE YOU<br /><em>BUILDING?</em></h1><p>Ask a circuit question or upload a clear circuit photo. Your signed-in account keeps only the analyses you submit.</p><div className="suggestion-grid">{suggestions.map(suggestion => <button key={suggestion} onClick={() => submitQuestion(suggestion)}>{suggestion}<ArrowUpRight size={14} /></button>)}</div><button className="sample-demo-launch" onClick={openSampleDemo}>VIEW SAMPLE CIRCUIT DEMO <ArrowUpRight size={14} /></button></div> : <div className="message-stream">{isDemo && <div className="sample-demo-banner mono">SAMPLE CIRCUIT DEMO / NOT SAVED TO YOUR ACCOUNT</div>}{messages.map(message => <div key={message.id} className={`workspace-message ${message.role}`}><div className="message-meta mono">{message.role === "user" ? "YOU / INPUT" : "IDK / DIAGNOSTIC KERNEL"}</div><div className="message-content">{message.content.split("\n").map((line, index) => <p key={index}>{line || <>&nbsp;</>}</p>)}{message.attachmentName && <div className="message-attachment"><FileImage size={16} /><span>{message.attachmentName}</span><small>{isDemo ? "SAMPLE IMAGE" : "YOUR IMAGE"}</small>{isDemo && <ImagePreviewButton className="message-preview-button" label="PREVIEW" onClick={() => setPreviewImage({ src: sampleCircuitImage, alt: "Sample breadboard circuit" })} />}</div>}</div></div>)}{analyzeMutation.isPending && <div className="workspace-message assistant analyzing"><div className="message-meta mono">IDK / DIAGNOSTIC KERNEL</div><div className="analyzing-line"><span className="analyzing-pulse" /><span>READING COMPONENTS AND VISIBLE CONNECTIONS</span><Loader2 className="spin" size={15} /></div></div>}{!isDemo && <CircuitPdfReportAction report={completedReport} />}</div>}
         </section>

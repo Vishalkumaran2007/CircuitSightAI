@@ -7,6 +7,11 @@ import Auth from "../client/src/pages/Auth";
 import Dashboard from "../client/src/pages/Dashboard";
 import Learning from "../client/src/pages/Learning";
 import Workspace from "../client/src/pages/Workspace";
+import Personalization from "../client/src/pages/Personalization";
+import Profile from "../client/src/pages/Profile";
+import Settings from "../client/src/pages/Settings";
+import Help from "../client/src/pages/Help";
+import SwitchAccount from "../client/src/pages/SwitchAccount";
 import { AppearanceLayer } from "../client/src/App";
 
 const routeState = vi.hoisted(() => ({ path: "/" }));
@@ -28,6 +33,11 @@ vi.mock("@/lib/trpc", () => ({
       getThread: { useQuery: () => ({ data: null, isLoading: false }) },
       analyze: { useMutation: () => ({ mutateAsync: async () => undefined, isPending: false, error: null }) },
     },
+    preferences: {
+      get: { useQuery: () => ({ data: { explanationLevel: "intermediate", responseStyle: "balanced", sarcasmEnabled: false, technicalTerminology: true, preferVisuals: true, suggestImprovements: true }, isLoading: false }) },
+      update: { useMutation: () => ({ mutateAsync: async (input: unknown) => input, isPending: false }) },
+    },
+    useUtils: () => ({ preferences: { get: { invalidate: () => undefined } } }),
   },
 }));
 
@@ -41,6 +51,11 @@ const routes = [
   { name: "workspace", Component: Workspace, marker: "workspace-page", text: "WHAT ARE YOU" },
   { name: "dashboard", Component: Dashboard, marker: "dashboard-page", text: "WELCOME" },
   { name: "learning", Component: Learning, marker: "learning-page", text: "THE MISTAKE" },
+  { name: "personalization", Component: Personalization, marker: "account-page", text: "TUNE" },
+  { name: "profile", Component: Profile, marker: "account-page", text: "YOUR" },
+  { name: "settings", Component: Settings, marker: "account-page", text: "WORKBENCH" },
+  { name: "help", Component: Help, marker: "account-page", text: "TRACE" },
+  { name: "switch-account", Component: SwitchAccount, marker: "account-page", text: "SWITCH" },
 ] as const;
 
 describe("route theme rendering", () => {

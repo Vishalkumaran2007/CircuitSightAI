@@ -13,6 +13,11 @@ import Workspace from "./pages/Workspace";
 import Learning from "./pages/Learning";
 import RouteTransition from "./components/RouteTransition";
 import ThemeToggle from "./components/ThemeToggle";
+import Personalization from "./pages/Personalization";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
+import SwitchAccount from "./pages/SwitchAccount";
 
 export function AppearanceLayer() {
   const [location] = useLocation();
@@ -28,6 +33,11 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/workspace" component={Workspace} />
       <Route path="/learning" component={Learning} />
+      <Route path="/personalization" component={Personalization} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/help" component={Help} />
+      <Route path="/switch-account" component={SwitchAccount} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

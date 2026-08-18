@@ -83,6 +83,27 @@ const formatIdkResponse = (analysis: CircuitAnalysis, question?: string) => {
 
 export const appRouter = router({
   system: systemRouter,
+  preferences: router({
+    get: protectedProcedure.query(async ({ ctx }) => {
+      const preferences = await db.getIdkPreferences(ctx.user.id);
+      return preferences ?? {
+        explanationLevel: "intermediate" as const,
+        responseStyle: "balanced" as const,
+        sarcasmEnabled: false,
+        technicalTerminology: true,
+        preferVisuals: true,
+        suggestImprovements: true,
+      };
+    }),
+    update: protectedProcedure.input(z.object({
+      explanationLevel: z.enum(["beginner", "intermediate", "advanced"]),
+      responseStyle: z.enum(["concise", "balanced", "detailed"]),
+      sarcasmEnabled: z.boolean(),
+      technicalTerminology: z.boolean(),
+      preferVisuals: z.boolean(),
+      suggestImprovements: z.boolean(),
+    })).mutation(({ ctx, input }) => db.upsertIdkPreferences(ctx.user.id, input)),
+  }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -111,16 +132,26 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         const titleSeed = input.question?.trim() || input.attachmentName || "Circuit analysis";
+        const priorMessages = input.threadId ? await db.listCircuitMessages(ctx.user.id, input.threadId) : [];
         const thread = input.threadId
           ? await db.getCircuitThread(ctx.user.id, input.threadId)
           : await db.createCircuitThread(ctx.user.id, titleSeed.slice(0, 180));
         if (!thread) throw new Error("Circuit thread was not found.");
+        const preferences = await db.getIdkPreferences(ctx.user.id) ?? {
+          explanationLevel: "intermediate" as const,
+          responseStyle: "balanced" as const,
+          sarcasmEnabled: false,
+          technicalTerminology: true,
+          preferVisuals: true,
+          suggestImprovements: true,
+        };
         const userContent = input.question?.trim() || "Analyze this circuit image.";
         await db.addCircuitMessage({ userId: ctx.user.id, threadId: thread.id, role: "user", content: userContent, attachmentName: input.attachmentName });
+        const conversationContext = priorMessages.slice(-8).map(message => `${message.role.toUpperCase()}: ${message.content}`).join("\n\n");
         const content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string; detail: "high" } }> = [
           {
             type: "text",
-            text: `Analyze this electronics circuit for a learner.\n\nUser question: ${input.question || "Please inspect the uploaded circuit image."}\n\nReturn only the requested structured response. Identify visible components and connections, distinguish evidence from inference, and never claim a connection is verified when it is obscured or ambiguous. Recommend safe, low-risk inspection steps. Do not instruct the user to energize an uncertain circuit.`,
+            text: `Analyze this electronics circuit as IDK, the Intelligent Diagnostic Kernel.\n\nUser question: ${input.question || "Please inspect the uploaded circuit image."}\n\nConversation context from this thread:\n${conversationContext || "No earlier context."}\n\nUser preferences: explanation level=${preferences.explanationLevel}; response style=${preferences.responseStyle}; technical terminology=${preferences.technicalTerminology ? "preferred" : "avoid"}; visual explanations=${preferences.preferVisuals ? "preferred" : "not requested"}; circuit improvement suggestions=${preferences.suggestImprovements ? "enabled" : "disabled"}; sarcasm=${preferences.sarcasmEnabled ? "allowed sparingly" : "disabled"}.\n\nReturn only the requested structured response. Identify visible components and connections, distinguish evidence from inference, adapt vocabulary and detail to the preferences, ask for clarification in the uncertainty notice when additional information would materially improve the diagnosis, and never claim a connection is verified when it is obscured or ambiguous. Recommend safe, low-risk inspection steps. Do not instruct the user to energize an uncertain circuit.`,
           },
         ];
         if (input.imageDataUrl) {
@@ -131,7 +162,7 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: "You are IDK (Intelligent Diagnostic Kernel), a friendly electronics engineer speaking directly to a learner. Observe, understand, explain, diagnose, recommend, and engage. Return the requested structured JSON, but ground every statement in visible evidence. Use concise conversational language, explain why a suspected issue matters, adapt to the user’s intent, and use subtle wit only when it does not compromise technical accuracy or safety. Never invent components, connections, measurements, voltage, current, resistance, or electrical behavior. If the image is blurry, incomplete, or cannot establish electrical continuity, say so explicitly.",
+              content: "You are IDK (Intelligent Diagnostic Kernel), a friendly adaptive electronics diagnostic assistant. Maintain continuity with the provided thread context. Observe, understand, explain, diagnose, recommend, ask clarifying questions when evidence is insufficient, and engage conversationally. Return the requested structured JSON, but ground every statement in visible circuit data and user-provided information. Adapt terminology and detail to the user preferences. Use subtle wit only when permitted and never when it compromises technical accuracy or safety. Never invent components, connections, measurements, voltage, current, resistance, or electrical behavior. Support simple and complex circuit reasoning, current-path and signal-path explanations, fault tracing, schematics, breadboards, PCB layouts, analog, digital, and mixed-signal contexts when the supplied evidence supports them. If the image is blurry, incomplete, or cannot establish electrical continuity, say so explicitly.",
             },
             { role: "user", content },
           ],

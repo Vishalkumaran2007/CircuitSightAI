@@ -259,3 +259,78 @@
 .hero-tail { white-space: nowrap; }
 .hero-mobile-break { display: none; }
 @media (max-width: 860px) { .hero-mobile-break { display: inline; } }
+
+/* IDK account menu and utility routes */
+.account-menu { position: relative; flex: 1; min-width: 0; }
+.account-menu-trigger { width: 100%; border: 0; background: transparent; color: var(--foreground); text-align: left; cursor: pointer; padding: 0; }
+.account-menu-trigger:hover .account-avatar { background: var(--acid); color: var(--text-inverse); }
+.account-menu-identity { min-width: 0; }
+.account-menu-identity strong, .account-menu-identity small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-menu-identity small { color: var(--muted); font: 8px/1.2 "Monaspace Krypton"; margin-top: 4px; }
+.account-popover { position: absolute; z-index: 30; bottom: calc(100% + 12px); left: 0; width: 238px; border: 2px solid var(--border-strong); background: var(--surface-0); color: var(--foreground); box-shadow: 8px 8px 0 var(--acid); }
+.account-popover-head { display: grid; gap: 7px; padding: 13px 14px; border-bottom: 2px solid var(--border); }
+.account-popover-head strong { font: 700 13px/1.1 "Space Grotesk"; }
+.account-popover-nav { display: grid; gap: 0; padding: 6px; }
+.account-popover-nav a, .account-popover-nav button { display: flex; align-items: center; gap: 9px; width: 100%; border: 0; background: transparent; color: var(--foreground); padding: 10px 9px; text-align: left; cursor: pointer; font: 700 9px/1 "Space Grotesk"; letter-spacing: .06em; text-decoration: none; }
+.account-popover-nav a:hover, .account-popover-nav button:hover, .account-popover-nav a:focus-visible, .account-popover-nav button:focus-visible { background: var(--acid); color: var(--text-inverse); outline: none; }
+.account-menu-divider { height: 1px; background: var(--border); margin: 5px 8px; }
+.account-menu-compact { flex: 0 0 auto; width: auto; }
+.account-menu-compact .account-menu-trigger { width: auto; }
+.account-menu-compact .account-menu-identity { display: none; }
+.account-menu-compact .account-avatar { width: 32px; height: 32px; }
+.account-menu-compact .account-popover { top: calc(100% + 12px); bottom: auto; right: 0; left: auto; }
+.account-page { min-height: 100vh; background: var(--surface-0); color: var(--foreground); }
+.account-topbar { background: var(--surface-0); }
+.account-topbar .brand { max-width: 250px; }
+.account-topnav { display: flex; align-items: center; gap: 22px; margin-left: auto; margin-right: 28px; }
+.account-topnav a { color: var(--muted); font: 700 9px/1 "Monaspace Krypton"; text-decoration: none; letter-spacing: .06em; }
+.account-topnav a:hover, .account-topnav a:focus-visible { color: var(--acid); outline: none; }
+.account-hero { max-width: 1100px; margin: 0 auto; padding: 86px 38px 42px; }
+.account-hero h1 { max-width: 700px; margin: 20px 0 16px; font: 700 clamp(58px, 9vw, 130px)/.84 "Space Grotesk"; letter-spacing: -.08em; text-transform: uppercase; }
+.account-hero h1 em { color: var(--acid); font-style: normal; }
+.account-hero p { max-width: 620px; color: var(--muted); font: 16px/1.55 "Space Grotesk"; margin-bottom: 24px; }
+.account-content { max-width: 1100px; margin: 0 auto; padding: 0 38px 86px; }
+.preference-layout, .settings-grid, .help-grid, .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.preference-panel, .settings-card, .help-card, .profile-data, .profile-note, .switch-account-card { border: 2px solid var(--border); background: var(--surface-1); padding: 24px; }
+.preference-panel-wide, .help-card-wide, .profile-note { grid-column: 1 / -1; }
+.panel-kicker, .settings-card > .mono, .help-card > .mono, .profile-note > .mono { color: var(--acid); font-size: 9px; letter-spacing: .08em; }
+.preference-panel h2, .settings-card h2, .help-card h2 { font: 700 28px/.95 "Space Grotesk"; letter-spacing: -.05em; margin: 17px 0 10px; }
+.preference-panel p, .settings-card p, .help-card p, .profile-note p, .switch-account-card p { color: var(--muted); font: 14px/1.5 "Space Grotesk"; }
+.segmented-control { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.segmented-control button { border: 2px solid var(--border); background: transparent; color: var(--foreground); padding: 10px 12px; cursor: pointer; font: 700 9px/1 "Monaspace Krypton"; }
+.segmented-control button:hover, .segmented-control button[aria-checked="true"] { background: var(--acid); color: var(--text-inverse); border-color: var(--acid); }
+.preference-checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+.preference-checks label { display: flex; gap: 11px; border-top: 1px solid var(--border); padding-top: 14px; cursor: pointer; }
+.preference-checks input { width: 17px; height: 17px; accent-color: var(--acid); flex: 0 0 auto; }
+.preference-checks strong, .preference-checks small { display: block; }
+.preference-checks strong { font: 700 10px/1.2 "Space Grotesk"; }
+.preference-checks small { color: var(--muted); font: 11px/1.35 "Space Grotesk"; margin-top: 5px; }
+.preference-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+.profile-identity { grid-column: 1 / -1; display: flex; align-items: center; gap: 18px; border-bottom: 2px solid var(--border); padding: 0 0 24px; }
+.profile-avatar { width: 82px; height: 82px; display: grid; place-items: center; background: var(--acid); color: var(--text-inverse); font: 700 36px/1 "Monaspace Krypton"; border: 2px solid var(--border-strong); }
+.profile-identity h2 { margin: 7px 0 4px; font: 700 28px/1 "Space Grotesk"; }
+.profile-identity p { color: var(--muted); margin: 0; font: 13px/1.3 "Monaspace Krypton"; }
+.profile-data { display: grid; gap: 18px; }
+.profile-data-row { display: flex; gap: 12px; align-items: flex-start; }
+.profile-data-row svg { color: var(--acid); margin-top: 2px; }
+.profile-data-row small, .profile-data-row strong { display: block; }
+.profile-data-row small { color: var(--muted); font: 8px/1 "Monaspace Krypton"; }
+.profile-data-row strong { font: 700 12px/1.2 "Space Grotesk"; margin-top: 5px; }
+.settings-card-head { display: flex; align-items: center; gap: 9px; color: var(--acid); }
+.settings-card-head span { color: var(--muted); }
+.settings-card .button, .help-card .button { margin-top: 15px; }
+.help-card > svg { color: var(--acid); margin-bottom: 15px; }
+.help-card ol { display: grid; gap: 11px; margin: 19px 0 0; padding-left: 22px; color: var(--foreground); font: 13px/1.45 "Space Grotesk"; }
+.help-card li::marker { color: var(--acid); font-family: "Monaspace Krypton"; }
+.help-examples { display: grid; gap: 7px; margin-top: 18px; }
+.help-examples button { display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--border); background: transparent; color: var(--foreground); padding: 11px; text-align: left; cursor: pointer; font: 12px/1.2 "Space Grotesk"; }
+.help-examples button:hover { background: var(--acid); color: var(--text-inverse); border-color: var(--acid); }
+.switch-account-card { max-width: 720px; }
+.switch-account-current { display: flex; align-items: center; gap: 13px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.switch-account-current > svg { color: var(--acid); }
+.switch-account-current span, .switch-account-current strong, .switch-account-current small { display: block; }
+.switch-account-current span { color: var(--acid); font-size: 9px; }
+.switch-account-current strong { font: 700 17px/1.1 "Space Grotesk"; margin-top: 7px; }
+.switch-account-current small { color: var(--muted); font: 10px/1.2 "Monaspace Krypton"; margin-top: 4px; }
+.switch-account-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+@media (max-width: 760px) { .account-topnav { display: none; } .account-hero { padding: 62px 20px 30px; } .account-content { padding: 0 20px 58px; } .preference-layout, .settings-grid, .help-grid, .profile-grid { grid-template-columns: 1fr; } .preference-panel-wide, .help-card-wide, .profile-note { grid-column: auto; } .preference-checks { grid-template-columns: 1fr; } .account-popover { width: min(238px, calc(100vw - 36px)); } .account-menu:not(.account-menu-compact) .account-popover { left: auto; right: 0; } .account-hero h1 { font-size: clamp(54px, 17vw, 88px); } .account-hero p { font-size: 14px; } .profile-identity { align-items: flex-start; } }

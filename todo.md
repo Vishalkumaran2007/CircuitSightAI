@@ -245,3 +245,12 @@
 
 - [x] Add rendered app-shell coverage proving the home route uses one icon trigger and workspace retains the full controls.
 - [x] Exercise Escape closing the opened home dropdown through the document keyboard listener.
+
+# IDK Account and Preferences Specification
+
+- [x] Add a clickable workspace account area with a functional menu in the exact order: Personalization, Profile, Settings, Help, Switch account, Log out.
+- [x] Add protected Personalization, Profile, Settings, and Help routes with responsive IDK styling and real escape paths.
+- [x] Persist personalization and application preferences through protected backend procedures where backend support is required; keep purely local preferences explicit.
+- [x] Implement functional logout through the existing authentication system and provide an honest switch-account flow without pretending multiple accounts exist.
+- [x] Preserve the existing IDK workspace analysis interface, multimodal analysis, confidence/findings, PDF exports, and reporting behavior.
+- [x] Add rendered interaction, accessibility, responsive, typecheck, test, and production-build coverage for the specification.

@@ -26,6 +26,22 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
+export const idkPreferences = mysqlTable("idk_preferences", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  explanationLevel: mysqlEnum("explanationLevel", ["beginner", "intermediate", "advanced"]).default("intermediate").notNull(),
+  responseStyle: mysqlEnum("responseStyle", ["concise", "balanced", "detailed"]).default("balanced").notNull(),
+  sarcasmEnabled: boolean("sarcasmEnabled").default(false).notNull(),
+  technicalTerminology: boolean("technicalTerminology").default(true).notNull(),
+  preferVisuals: boolean("preferVisuals").default(true).notNull(),
+  suggestImprovements: boolean("suggestImprovements").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, table => [index("idk_preferences_user_idx").on(table.userId)]);
+
+export type IdkPreferences = typeof idkPreferences.$inferSelect;
+export type InsertIdkPreferences = typeof idkPreferences.$inferInsert;
+
 export const circuitThreads = mysqlTable("circuit_threads", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),

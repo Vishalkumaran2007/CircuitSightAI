@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { CircuitMessage, CircuitThread, InsertUser, circuitMessages, circuitThreads, users } from "../drizzle/schema";
+import { CircuitMessage, CircuitThread, IdkPreferences, InsertIdkPreferences, InsertUser, circuitMessages, circuitThreads, idkPreferences, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -86,6 +86,22 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getIdkPreferences(userId: number): Promise<IdkPreferences | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(idkPreferences).where(eq(idkPreferences.userId, userId)).limit(1);
+  return result[0];
+}
+
+export async function upsertIdkPreferences(userId: number, values: Omit<InsertIdkPreferences, "id" | "userId" | "createdAt" | "updatedAt">): Promise<IdkPreferences> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable.");
+  await db.insert(idkPreferences).values({ userId, ...values }).onDuplicateKeyUpdate({ set: values });
+  const preferences = await getIdkPreferences(userId);
+  if (!preferences) throw new Error("IDK preferences could not be saved.");
+  return preferences;
 }
 
 export async function listCircuitThreads(userId: number): Promise<CircuitThread[]> {
