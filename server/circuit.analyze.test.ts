@@ -74,9 +74,14 @@ describe("circuit.analyze", () => {
 
     expect(result.analysis).toEqual(validAnalysis);
     expect(result.thread.title).toBe("Why is my LED not lighting?");
-    expect(result.displayContent).toContain("CONFIDENCE / 78%");
+    expect(result.displayContent).toContain("Got it — I’ve checked the circuit.");
+    expect(result.displayContent).toContain("I’m reasonably confident about the main diagnosis (~78%)");
+    expect(result.displayContent).toContain("Want me to trace the current path step-by-step?");
+    expect(result.displayContent).not.toContain("CONFIDENCE /");
+    expect(result.displayContent).not.toContain("RECOMMENDED CHECKS");
     expect(invokeLLMMock).toHaveBeenCalledOnce();
     expect(invokeLLMMock.mock.calls[0]?.[0].response_format.type).toBe("json_schema");
+    expect(invokeLLMMock.mock.calls[0]?.[0].messages[0].content).toContain("IDK (Intelligent Diagnostic Kernel)");
   });
 
   it("passes an uploaded circuit image as multimodal content", async () => {

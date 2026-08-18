@@ -195,3 +195,20 @@
 
 - [x] Change dark-mode accents from electric blue to lavender while keeping the background black.
 - [x] Preserve the white-black light theme and verify both palettes across desktop/mobile, tests, and production build.
+
+# Theme Preference and High Contrast
+
+- [x] Add a persistent preference to follow the operating system light/dark theme.
+- [x] Add a persistent high-contrast accessibility mode toggle with keyboard support.
+- [x] Verify preference persistence, reduced-motion compatibility, responsive controls, and contrast contracts.
+
+# IDK Conversational AI Style
+
+- [x] Rename the user-facing AI identity to IDK / Intelligent Diagnostic Kernel.
+- [x] Preserve structured analysis data while presenting normal responses conversationally with grounded confidence and uncertainty language.
+- [x] Add IDK response-style tests without changing the underlying multimodal analysis pipeline or report exports.
+
+# Accessibility Verification Follow-up
+
+- [x] Add mocked localStorage and matchMedia tests for system-theme changes, persistence, and DOM class synchronization.
+- [x] Define and test a guaranteed contrast-safe pressed-state text token for appearance controls.

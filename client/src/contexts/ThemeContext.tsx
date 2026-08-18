@@ -1,10 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light";
+type ThemePreference = Theme | "system";
 
 interface ThemeContextType {
   theme: Theme;
+  preference: ThemePreference;
+  systemTheme: Theme;
   toggleTheme: () => void;
+  setPreference: (preference: ThemePreference) => void;
+  highContrast: boolean;
+  toggleHighContrast: () => void;
   switchable: boolean;
 }
 
@@ -16,30 +22,63 @@ interface ThemeProviderProps {
   switchable?: boolean;
 }
 
+function readSystemTheme(): Theme {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return "dark";
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
+
+function readStoredPreference(): ThemePreference {
+  if (typeof window === "undefined") return "dark";
+  const stored = window.localStorage.getItem("circuitsight-theme-preference") ?? window.localStorage.getItem("circuitsight-theme");
+  if (stored === "system") return "system";
+  if (stored === "light" || stored === "yellow") return "light";
+  return "dark";
+}
+
 export function ThemeProvider({ children, defaultTheme = "dark", switchable = true }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [systemTheme, setSystemTheme] = useState<Theme>(() => readSystemTheme());
+  const [preference, setPreferenceState] = useState<ThemePreference>(() => {
     if (typeof window === "undefined" || !switchable) return defaultTheme;
     const queryTheme = new URLSearchParams(window.location.search).get("theme");
+    if (queryTheme === "system") return "system";
     if (queryTheme === "dark" || queryTheme === "blue") return "dark";
     if (queryTheme === "light" || queryTheme === "yellow") return "light";
-    const stored = window.localStorage.getItem("circuitsight-theme");
-    if (stored === "dark" || stored === "blue") return "dark";
-    if (stored === "light" || stored === "yellow") return "light";
-    return defaultTheme;
+    return readStoredPreference();
   });
+  const [highContrast, setHighContrast] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("circuitsight-high-contrast") === "true";
+  });
+  const theme: Theme = preference === "system" ? systemTheme : preference;
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    const media = window.matchMedia("(prefers-color-scheme: light)");
+    const handleChange = () => setSystemTheme(media.matches ? "light" : "dark");
+    handleChange();
+    media.addEventListener?.("change", handleChange);
+    return () => media.removeEventListener?.("change", handleChange);
+  }, []);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
       const root = document.documentElement;
       root.classList.toggle("dark", theme === "dark");
       root.classList.toggle("light-theme", theme === "light");
+      root.classList.toggle("high-contrast", highContrast);
     }
-    if (switchable && typeof window !== "undefined") window.localStorage.setItem("circuitsight-theme", theme);
-  }, [theme, switchable]);
+    if (switchable && typeof window !== "undefined") {
+      window.localStorage.setItem("circuitsight-theme-preference", preference);
+      window.localStorage.setItem("circuitsight-theme", theme);
+      window.localStorage.setItem("circuitsight-high-contrast", String(highContrast));
+    }
+  }, [theme, preference, highContrast, switchable]);
 
-  const toggleTheme = () => setTheme(current => current === "dark" ? "light" : "dark");
+  const toggleTheme = () => setPreferenceState(current => (current === "dark" ? "light" : "dark"));
+  const setPreference = (nextPreference: ThemePreference) => setPreferenceState(nextPreference);
+  const toggleHighContrast = () => setHighContrast(current => !current);
 
-  return <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme, preference, systemTheme, toggleTheme, setPreference, highContrast, toggleHighContrast, switchable }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

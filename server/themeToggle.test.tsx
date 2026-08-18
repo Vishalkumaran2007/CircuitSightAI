@@ -5,7 +5,12 @@ import { renderToStaticMarkup } from "react-dom/server";
 import TestRenderer, { act } from "react-test-renderer";
 import { describe, expect, it } from "vitest";
 import ThemeToggle from "../client/src/components/ThemeToggle";
-import { ThemeProvider } from "../client/src/contexts/ThemeContext";
+import { ThemeProvider, useTheme } from "../client/src/contexts/ThemeContext";
+
+function PreferenceProbe() {
+  const { theme, preference, highContrast } = useTheme();
+  return <span className="preference-probe" data-theme={theme} data-preference={preference} data-contrast={String(highContrast)} />;
+}
 
 describe("CircuitSight theme toggle", () => {
   it("renders the blue-theme destination from the default yellow mode", () => {
@@ -28,6 +33,8 @@ describe("CircuitSight theme toggle", () => {
     expect(markup).toContain("Switch to dark black-lavender theme");
     expect(markup).toContain(">DARK</span>");
     expect(markup).toContain("lucide-moon");
+    expect(markup).toContain("Follow operating system theme");
+    expect(markup).toContain("Enable high contrast mode");
   });
 
   it("toggles the palette label and preserves keyboard reachability", () => {
@@ -39,16 +46,22 @@ describe("CircuitSight theme toggle", () => {
         </ThemeProvider>,
       );
     });
-    const button = renderer!.root.findByType("button");
+    const button = renderer!.root.findAllByType("button")[0];
     expect(button.props.type).toBe("button");
     expect(button.props["aria-label"]).toBe("Switch to light white-black theme");
     expect(button.props.tabIndex ?? 0).toBeGreaterThanOrEqual(0);
     let prevented = false;
     act(() => button.props.onKeyDown({ key: "Enter", preventDefault: () => { prevented = true; } }));
     expect(prevented).toBe(true);
-    expect(renderer!.root.findByType("button").props["aria-label"]).toBe("Switch to dark black-lavender theme");
+    expect(renderer!.root.findAllByType("button")[0].props["aria-label"]).toBe("Switch to dark black-lavender theme");
     act(() => button.props.onKeyDown({ key: " ", preventDefault: () => undefined }));
-    expect(renderer!.root.findByType("button").props["aria-label"]).toBe("Switch to light white-black theme");
+    expect(renderer!.root.findAllByType("button")[0].props["aria-label"]).toBe("Switch to light white-black theme");
+    const buttons = renderer!.root.findAllByType("button");
+    expect(buttons).toHaveLength(3);
+    act(() => buttons[1].props.onClick());
+    expect(renderer!.root.findAllByType("button")[1].props["aria-pressed"]).toBe(true);
+    act(() => buttons[2].props.onClick());
+    expect(renderer!.root.findAllByType("button")[2].props["aria-pressed"]).toBe(true);
     renderer!.unmount();
   });
 
@@ -60,6 +73,8 @@ describe("CircuitSight theme toggle", () => {
     expect(css).toContain("--foreground: #000000");
     expect(css).toContain("--surface-0: #000000");
     expect(css).toContain("--surface-1: #FFFFFF");
+    expect(css).toContain("--text-inverse: #000000");
+    expect(css).toContain("--text-inverse: #FFFFFF");
     expect(css).toContain(".light-theme .button-acid");
     expect(css).toContain(".light-theme .hero-stamp");
     expect(css).toContain(".section-dark { background: var(--surface-0)");
@@ -68,8 +83,15 @@ describe("CircuitSight theme toggle", () => {
       expect(css).toContain(selector);
     }
     expect(css).toContain("--acid-rgb: 196,181,253");
+    expect(css).toContain(".theme-controls");
     expect(css).toContain(".theme-toggle");
-    expect(css).toContain("@media (max-width: 860px) { .theme-toggle");
+    expect(css).toContain(".high-contrast");
+    expect(css).toContain("color: var(--text-inverse)");
+    const themeContext = readFileSync(resolve(process.cwd(), "client/src/contexts/ThemeContext.tsx"), "utf8");
+    expect(themeContext).toContain('matchMedia("(prefers-color-scheme: light)")');
+    expect(themeContext).toContain("circuitsight-theme-preference");
+    expect(themeContext).toContain("circuitsight-high-contrast");
+    expect(css).toContain("@media (max-width: 860px) { .theme-controls");
     expect(css).toContain("prefers-reduced-motion: reduce");
     expect(css).toContain("button:focus-visible");
     expect(css).toContain('--display-font: "Space Grotesk", sans-serif');
@@ -84,5 +106,52 @@ describe("CircuitSight theme toggle", () => {
       const routeSource = readFileSync(resolve(process.cwd(), `client/src/pages/${route}.tsx`), "utf8");
       expect(routeSource).not.toMatch(/#09090B|#09090b|#111113|#17171a|#DFE104/);
     }
+  });
+
+  it("follows system changes, persists preferences, and synchronizes DOM classes", () => {
+    const classNames = new Set<string>();
+    const listeners: Array<() => void> = [];
+    const values = new Map<string, string>([["circuitsight-theme-preference", "system"]]);
+    const media = {
+      matches: true,
+      addEventListener: (_event: string, listener: () => void) => listeners.push(listener),
+      removeEventListener: () => undefined,
+    };
+    const originalWindow = globalThis.window;
+    const originalDocument = globalThis.document;
+    Object.defineProperty(globalThis, "window", { configurable: true, value: {
+      location: { search: "" },
+      matchMedia: () => media,
+      localStorage: { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value) },
+    } });
+    Object.defineProperty(globalThis, "document", { configurable: true, value: { documentElement: { classList: { toggle: (name: string, enabled: boolean) => enabled ? classNames.add(name) : classNames.delete(name) } } } });
+
+    let renderer: TestRenderer.ReactTestRenderer;
+    act(() => {
+      renderer = TestRenderer.create(
+        <ThemeProvider defaultTheme="dark" switchable>
+          <PreferenceProbe />
+          <ThemeToggle />
+        </ThemeProvider>,
+      );
+    });
+    const probe = () => renderer!.root.findByProps({ className: "preference-probe" });
+    expect(probe().props["data-theme"]).toBe("light");
+    expect(probe().props["data-preference"]).toBe("system");
+    expect(classNames.has("light-theme")).toBe(true);
+    expect(values.get("circuitsight-theme")).toBe("light");
+
+    act(() => { media.matches = false; listeners[0]?.(); });
+    expect(probe().props["data-theme"]).toBe("dark");
+    expect(classNames.has("dark")).toBe(true);
+
+    const buttons = renderer!.root.findAllByType("button");
+    act(() => buttons[2].props.onClick());
+    expect(probe().props["data-contrast"]).toBe("true");
+    expect(classNames.has("high-contrast")).toBe(true);
+    expect(values.get("circuitsight-high-contrast")).toBe("true");
+    renderer!.unmount();
+    Object.defineProperty(globalThis, "window", { configurable: true, value: originalWindow });
+    Object.defineProperty(globalThis, "document", { configurable: true, value: originalDocument });
   });
 });

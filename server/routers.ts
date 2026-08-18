@@ -59,10 +59,26 @@ type CircuitAnalysis = {
   uncertaintyNotice: string;
 };
 
-const formatAnalysisForThread = (analysis: CircuitAnalysis) => {
-  const findings = analysis.findings.map(finding => `- ${finding.label}: ${finding.status.toUpperCase()} (${finding.confidence}%) — ${finding.detail}`).join("\n");
-  const steps = analysis.recommendedSteps.map((step, index) => `${index + 1}. ${step}`).join("\n");
-  return `${analysis.summary}\n\n${analysis.diagnosis}\n\nCONFIDENCE / ${analysis.confidence}%\n\nFINDINGS\n${findings || "No visible findings were returned."}\n\nRECOMMENDED CHECKS\n${steps || "No additional checks were returned."}\n\nUNCERTAINTY NOTICE\n${analysis.uncertaintyNotice}`;
+const formatIdkResponse = (analysis: CircuitAnalysis, question?: string) => {
+  const normalizedQuestion = question?.toLowerCase() ?? "";
+  const greeting = /^(hi|hello|hey)\b/.test(normalizedQuestion) && !analysis.findings.length
+    ? "Hey — I’m IDK, the Intelligent Diagnostic Kernel. Upload a circuit image or schematic and I’ll inspect the components, connections, topology, and likely faults."
+    : "Got it — I’ve checked the circuit.";
+  const confidence = analysis.confidence >= 85
+    ? `I’m highly confident about the visible evidence here (~${analysis.confidence}%).`
+    : analysis.confidence >= 60
+      ? `I’m reasonably confident about the main diagnosis (~${analysis.confidence}%), although some of the wiring is not completely clear.`
+      : `I can only make a tentative call here (~${analysis.confidence}%), so I don’t want to pretend the image proves more than it does.`;
+  const findings = analysis.findings.length
+    ? analysis.findings.map(finding => {
+      if (finding.status === "uncertain" || finding.status === "not_visible") return `The ${finding.label.toLowerCase()} is not fully settled: ${finding.detail}`;
+      return `I can see ${finding.label.toLowerCase()}: ${finding.detail}`;
+    }).join("\n\n")
+    : "I didn’t get a clear enough visual finding to call out a specific component or connection.";
+  const recommendations = analysis.recommendedSteps.length
+    ? `If you’re testing this physically, I’d start with ${analysis.recommendedSteps[0].toLowerCase()}${analysis.recommendedSteps.length > 1 ? ` Then I’d also ${analysis.recommendedSteps.slice(1).join(" Also, ").toLowerCase()}` : ""}`
+    : "I’d take a clearer, top-down photo before making a physical correction.";
+  return `${greeting}\n\n${analysis.summary}\n\nHere’s what I think is happening: ${analysis.diagnosis}\n\n${findings}\n\n${confidence}\n\n${analysis.uncertaintyNotice}\n\n${recommendations}\n\nWant me to trace the current path step-by-step?`;
 };
 
 export const appRouter = router({
@@ -115,7 +131,7 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: "You are CircuitSight AI, a cautious electronics debugging assistant. Favor visible evidence, clear confidence levels, and learner-friendly explanations. If the image is blurry, incomplete, or cannot establish electrical continuity, say so explicitly.",
+              content: "You are IDK (Intelligent Diagnostic Kernel), a friendly electronics engineer speaking directly to a learner. Observe, understand, explain, diagnose, recommend, and engage. Return the requested structured JSON, but ground every statement in visible evidence. Use concise conversational language, explain why a suspected issue matters, adapt to the user’s intent, and use subtle wit only when it does not compromise technical accuracy or safety. Never invent components, connections, measurements, voltage, current, resistance, or electrical behavior. If the image is blurry, incomplete, or cannot establish electrical continuity, say so explicitly.",
             },
             { role: "user", content },
           ],
@@ -127,7 +143,7 @@ export const appRouter = router({
         if (!raw) throw new Error("The analysis service returned an empty response.");
         try {
           const analysis = JSON.parse(raw) as CircuitAnalysis;
-          const displayContent = formatAnalysisForThread(analysis);
+          const displayContent = formatIdkResponse(analysis, input.question);
           await db.addCircuitMessage({ userId: ctx.user.id, threadId: thread.id, role: "assistant", content: displayContent });
           return { thread, analysis, displayContent };
         } catch {
