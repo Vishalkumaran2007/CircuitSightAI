@@ -101,3 +101,29 @@
 
 - [x] Add rendered markup assertions for Learning Loop navigation links and primary action buttons across session states.
 - [x] Tie the rendered control coverage to the visible focus-style contract.
+
+# Shared Route Loading
+
+- [x] Add a shared destination-aware loading overlay between page transitions.
+- [x] Preserve reduced-motion behavior and keyboard-safe navigation.
+- [x] Verify route handoffs, responsive presentation, tests, and production build.
+
+# Route Transition Handoff Coverage
+
+- [x] Verify the shared loading overlay on real Home-to-auth, Learning, and Workspace route changes.
+- [x] Add reproducible location-change interaction coverage for overlay appearance and dismissal.
+
+# Real Route Transition QA
+
+- [x] Verify Home-to-auth, Learning, and Workspace handoffs through the running route surface and browser-independent CTA integration coverage; direct browser click activation was unavailable in the sandbox.
+- [x] Extend simulated transition coverage for the auth destination and dismissal behavior.
+
+# Real App CTA Handoff Evidence
+
+- [x] Add an integration-style test that exercises Home CTA destinations and observes the shared overlay lifecycle across route changes.
+- [x] Verify the three public CTA destinations through the running Home route surface and integration coverage without relying only on the QA query state.
+
+# Final Route Transition Evidence
+
+- [x] Add dismissal assertions to the Home CTA integration test for all three destinations.
+- [ ] Live browser click verification of Home-to-auth, Home-to-learning, and Home-to-workspace handoffs is blocked by the sandbox interaction layer; browser-independent integration coverage and route-surface inspection are complete.

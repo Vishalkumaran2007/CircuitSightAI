@@ -1,5 +1,5 @@
 /* Kinetic Circuit Brutalism: asymmetric editorial layout, acid signal actions, hard borders, candid confidence states. */
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CircuitPdfReportAction } from "@/components/CircuitPdfReportAction";
 import { ImagePreviewButton } from "@/components/ImagePreviewButton";
 import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";

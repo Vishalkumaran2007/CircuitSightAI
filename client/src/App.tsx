@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Workspace from "./pages/Workspace";
 import Learning from "./pages/Learning";
+import RouteTransition from "./components/RouteTransition";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -33,6 +34,7 @@ export default function App() {
         <TooltipProvider>
           <Toaster theme="dark" />
           <Router />
+          <RouteTransition />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
