@@ -54,3 +54,19 @@
 - [x] Validate saved-analysis discovery using the accessible preview and real persisted history without browser sign-in.
 - [x] Extend automated coverage for search, recency filters, reset behavior, and zero-results messaging.
 - [x] Add reproducible component-level rendering tests for saved-analysis controls and zero-results messaging.
+
+# Circuit Image Preview
+
+- [x] Add a preview action for uploaded circuit images before analysis.
+- [x] Add a preview action for the sample demo circuit image.
+- [x] Verify keyboard access, responsive preview presentation, tests, and production build.
+
+# Preview Verification Follow-up
+
+- [x] Add reproducible rendered coverage for home/workspace preview triggers and the opened dialog state.
+- [x] Verify the opened preview dialog presentation at desktop and mobile breakpoints without manual authentication.
+
+# Verifiable Preview QA
+
+- [x] Add a non-invasive sample-preview QA state for desktop and mobile visual verification.
+- [x] Add reproducible responsive stylesheet coverage for the opened preview dialog.

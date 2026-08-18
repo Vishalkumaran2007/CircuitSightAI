@@ -1,4 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { ImagePreviewButton } from "@/components/ImagePreviewButton";
+import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
 import { SavedAnalysisHistory } from "@/components/SavedAnalysisHistory";
 import { trpc } from "@/lib/trpc";
 import { ArrowUpRight, FileImage, Loader2, LogOut, Menu, Paperclip, Plus, Send, Sparkles, X } from "lucide-react";
@@ -8,6 +10,7 @@ import { Link, useLocation } from "wouter";
 type WorkspaceMessage = { id: number | string; role: "user" | "assistant"; content: string; attachmentName?: string | null };
 
 const suggestions = ["Why is my LED not lighting?", "Check this breadboard wiring", "Explain resistor polarity"];
+const sampleCircuitImage = "/manus-storage/circuitsight-scanner_401035d5.png";
 const sampleCircuitMessages: WorkspaceMessage[] = [
   { id: "sample-user", role: "user", content: "Sample circuit: Why does the LED stay off on this breadboard?", attachmentName: "sample-breadboard.jpg" },
   { id: "sample-assistant", role: "assistant", content: "SAMPLE CIRCUIT DEMO — NOT SAVED TO YOUR HISTORY\n\nA typical LED issue is reversed polarity, a missing current-limiting resistor, or a ground rail that is not bridged across the board.\n\nCONFIDENCE / EXAMPLE ONLY\n\nRECOMMENDED CHECKS\n1. Confirm the LED’s longer lead connects toward the resistor or positive supply.\n2. Trace the ground rail end-to-end with power disconnected.\n3. Confirm a resistor is in series with the LED before energizing the circuit.\n\nUNCERTAINTY NOTICE\nThis is a teaching sample, not an analysis of your own circuit." },
@@ -19,6 +22,8 @@ export default function Workspace() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
   const [messages, setMessages] = useState<WorkspaceMessage[]>([]);
   const [activeThreadId, setActiveThreadId] = useState<number | null>(null);
   const [isDemo, setIsDemo] = useState(false);
@@ -26,6 +31,16 @@ export default function Workspace() {
   const analyzeMutation = trpc.circuit.analyze.useMutation();
   const { data: threads = [], refetch: refetchThreads, isLoading: isThreadsLoading } = trpc.circuit.listThreads.useQuery(undefined, { enabled: Boolean(user) });
   const threadQuery = trpc.circuit.getThread.useQuery({ threadId: activeThreadId ?? 0 }, { enabled: activeThreadId !== null });
+
+  useEffect(() => {
+    if (!file) {
+      setFilePreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setFilePreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
   useEffect(() => {
     if (!loading && !user) setLocation("/auth");
@@ -39,7 +54,7 @@ export default function Workspace() {
   }, [threadQuery.data]);
 
   const newAnalysis = () => {
-    setMessages([]); setFile(null); setDraft(""); setActiveThreadId(null); setIsDemo(false); setSidebarOpen(false);
+    setMessages([]); setFile(null); setDraft(""); setActiveThreadId(null); setIsDemo(false); setPreviewImage(null); setSidebarOpen(false);
   };
 
   const openThread = (threadId: number) => {
@@ -97,9 +112,10 @@ export default function Workspace() {
       <div className="workspace-main">
         <header className="workspace-topbar"><button className="workspace-menu" onClick={() => setSidebarOpen(true)} aria-label="Open workspace menu"><Menu size={19} /></button><div><span className="mono">CIRCUITSIGHT / ANALYSIS</span><strong>{isDemo ? "SAMPLE CIRCUIT DEMO" : activeThreadId ? "SAVED CIRCUIT THREAD" : "NEW CIRCUIT THREAD"}</strong></div><div className="workspace-top-status"><span className="live-dot" /> VISION READY</div></header>
         <section className={`workspace-conversation ${messages.length === 0 ? "empty" : ""}`}>
-          {messages.length === 0 ? <div className="workspace-empty"><div className="workspace-empty-mark"><Sparkles size={28} /></div><span className="mono">INPUT FIELD / 01</span><h1>WHAT ARE YOU<br /><em>BUILDING?</em></h1><p>Ask a circuit question or upload a clear circuit photo. Your signed-in account keeps only the analyses you submit.</p><div className="suggestion-grid">{suggestions.map(suggestion => <button key={suggestion} onClick={() => submitQuestion(suggestion)}>{suggestion}<ArrowUpRight size={14} /></button>)}</div><button className="sample-demo-launch" onClick={openSampleDemo}>VIEW SAMPLE CIRCUIT DEMO <ArrowUpRight size={14} /></button></div> : <div className="message-stream">{isDemo && <div className="sample-demo-banner mono">SAMPLE CIRCUIT DEMO / NOT SAVED TO YOUR ACCOUNT</div>}{messages.map(message => <div key={message.id} className={`workspace-message ${message.role}`}><div className="message-meta mono">{message.role === "user" ? "YOU / INPUT" : "CIRCUITSIGHT / VISION"}</div><div className="message-content">{message.content.split("\n").map((line, index) => <p key={index}>{line || <>&nbsp;</>}</p>)}{message.attachmentName && <div className="message-attachment"><FileImage size={16} /><span>{message.attachmentName}</span><small>{isDemo ? "SAMPLE IMAGE" : "YOUR IMAGE"}</small></div>}</div></div>)}{analyzeMutation.isPending && <div className="workspace-message assistant analyzing"><div className="message-meta mono">CIRCUITSIGHT / VISION</div><div className="analyzing-line"><span className="analyzing-pulse" /><span>READING COMPONENTS AND VISIBLE CONNECTIONS</span><Loader2 className="spin" size={15} /></div></div>}</div>}
+          {messages.length === 0 ? <div className="workspace-empty"><div className="workspace-empty-mark"><Sparkles size={28} /></div><span className="mono">INPUT FIELD / 01</span><h1>WHAT ARE YOU<br /><em>BUILDING?</em></h1><p>Ask a circuit question or upload a clear circuit photo. Your signed-in account keeps only the analyses you submit.</p><div className="suggestion-grid">{suggestions.map(suggestion => <button key={suggestion} onClick={() => submitQuestion(suggestion)}>{suggestion}<ArrowUpRight size={14} /></button>)}</div><button className="sample-demo-launch" onClick={openSampleDemo}>VIEW SAMPLE CIRCUIT DEMO <ArrowUpRight size={14} /></button></div> : <div className="message-stream">{isDemo && <div className="sample-demo-banner mono">SAMPLE CIRCUIT DEMO / NOT SAVED TO YOUR ACCOUNT</div>}{messages.map(message => <div key={message.id} className={`workspace-message ${message.role}`}><div className="message-meta mono">{message.role === "user" ? "YOU / INPUT" : "CIRCUITSIGHT / VISION"}</div><div className="message-content">{message.content.split("\n").map((line, index) => <p key={index}>{line || <>&nbsp;</>}</p>)}{message.attachmentName && <div className="message-attachment"><FileImage size={16} /><span>{message.attachmentName}</span><small>{isDemo ? "SAMPLE IMAGE" : "YOUR IMAGE"}</small>{isDemo && <ImagePreviewButton className="message-preview-button" label="PREVIEW" onClick={() => setPreviewImage({ src: sampleCircuitImage, alt: "Sample breadboard circuit" })} />}</div>}</div></div>)}{analyzeMutation.isPending && <div className="workspace-message assistant analyzing"><div className="message-meta mono">CIRCUITSIGHT / VISION</div><div className="analyzing-line"><span className="analyzing-pulse" /><span>READING COMPONENTS AND VISIBLE CONNECTIONS</span><Loader2 className="spin" size={15} /></div></div>}</div>}
         </section>
-        <section className="workspace-composer-wrap"><div className="workspace-confidence mono">ANALYSIS IS PROBABILISTIC / CONFIDENCE WILL BE SHOWN WITH EVERY FINDING</div><form className="workspace-composer" onSubmit={event => { event.preventDefault(); submitQuestion(); }}><div className="composer-tools"><button type="button" onClick={() => fileInputRef.current?.click()} aria-label="Upload circuit image"><Paperclip size={18} /></button><input ref={fileInputRef} type="file" accept="image/*" onChange={event => setFile(event.target.files?.[0] || null)} /></div><textarea value={draft} onChange={event => setDraft(event.target.value)} placeholder="Describe a circuit or ask a doubt..." aria-label="Describe your circuit or ask a doubt" rows={1} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submitQuestion(); } }} /><button className="composer-send" type="submit" disabled={analyzeMutation.isPending || (!draft.trim() && !file)} aria-label="Send circuit question"><Send size={18} /></button></form>{file && <div className="composer-file"><FileImage size={15} /><span>{file.name}</span><button type="button" onClick={() => setFile(null)} aria-label="Remove attachment"><X size={14} /></button></div>}<div className="workspace-composer-note">CIRCUITSIGHT CAN MAKE MISTAKES. VERIFY POWER, POLARITY, AND CONTINUITY BEFORE ENERGIZING A CIRCUIT.</div></section>
+        <section className="workspace-composer-wrap"><div className="workspace-confidence mono">ANALYSIS IS PROBABILISTIC / CONFIDENCE WILL BE SHOWN WITH EVERY FINDING</div><form className="workspace-composer" onSubmit={event => { event.preventDefault(); submitQuestion(); }}><div className="composer-tools"><button type="button" onClick={() => fileInputRef.current?.click()} aria-label="Upload circuit image"><Paperclip size={18} /></button><input ref={fileInputRef} type="file" accept="image/*" onChange={event => setFile(event.target.files?.[0] || null)} /></div><textarea value={draft} onChange={event => setDraft(event.target.value)} placeholder="Describe a circuit or ask a doubt..." aria-label="Describe your circuit or ask a doubt" rows={1} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submitQuestion(); } }} /><button className="composer-send" type="submit" disabled={analyzeMutation.isPending || (!draft.trim() && !file)} aria-label="Send circuit question"><Send size={18} /></button></form>{file && <div className="composer-file"><FileImage size={15} /><span>{file.name}</span>{filePreviewUrl && <ImagePreviewButton className="composer-preview-button" label="PREVIEW" onClick={() => setPreviewImage({ src: filePreviewUrl, alt: file.name })} />}<button type="button" onClick={() => setFile(null)} aria-label="Remove attachment"><X size={14} /></button></div>}<div className="workspace-composer-note">CIRCUITSIGHT CAN MAKE MISTAKES. VERIFY POWER, POLARITY, AND CONTINUITY BEFORE ENERGIZING A CIRCUIT.</div></section>
+        <ImagePreviewDialog src={previewImage?.src ?? null} alt={previewImage?.alt ?? "Circuit image"} open={Boolean(previewImage)} onClose={() => setPreviewImage(null)} />
       </div>
     </main>
   );

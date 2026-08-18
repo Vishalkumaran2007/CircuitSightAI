@@ -1,5 +1,7 @@
 /* Kinetic Circuit Brutalism: asymmetric editorial layout, acid signal actions, hard borders, candid confidence states. */
 import { useState } from "react";
+import { ImagePreviewButton } from "@/components/ImagePreviewButton";
+import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
@@ -44,6 +46,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scanState, setScanState] = useState<"idle" | "scanning" | "complete">("idle");
   const [routeTarget, setRouteTarget] = useState<"auth" | "workspace" | null>(null);
+  const [samplePreviewOpen, setSamplePreviewOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "sample");
   const reduceMotion = useReducedMotion();
 
   const openWorkspace = () => {
@@ -138,7 +141,7 @@ export default function Home() {
         <div className="section-kicker lab-kicker"><span>( 02 )</span><span>THE CIRCUIT LAB</span><span>SAMPLE CIRCUIT DEMO</span></div>
         <div className="lab-heading"><h2>POINT.<br />SCAN.<br /><i>UNDERSTAND.</i></h2><div className="lab-side-note"><span className="mono">SAMPLE CIRCUIT / NOT SAVED</span><p>This teaching sample shows how CircuitSight presents an analysis. It is not user data and is never saved to your account.</p><button className="button button-outline" onClick={startScan}><ScanLine size={17} /> {scanState === "idle" ? "RUN SAMPLE DEMO" : scanState === "scanning" ? "ANALYZING SAMPLE..." : "SAMPLE COMPLETE"}</button></div></div>
         <div className="scanner-frame">
-          <div className="scanner-image"><img src={scannerImage} alt="Circuit board prepared for scanning" /><div className={`scan-beam ${scanState !== "idle" ? "active" : ""}`} /><div className="scan-target target-a" /><div className="scan-target target-b" /><div className="scan-target target-c" /><div className="image-label mono">INPUT / BREADBOARD_07.JPG</div></div>
+          <div className="scanner-image"><img src={scannerImage} alt="Circuit board prepared for scanning" /><div className={`scan-beam ${scanState !== "idle" ? "active" : ""}`} /><div className="scan-target target-a" /><div className="scan-target target-b" /><div className="scan-target target-c" /><div className="image-label mono">INPUT / BREADBOARD_07.JPG</div><ImagePreviewButton className="image-preview-trigger" label="PREVIEW IMAGE" onClick={() => setSamplePreviewOpen(true)} /></div>
           <aside className="analysis-panel"><div className="analysis-top"><span>SAMPLE ANALYSIS / DEMO</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>SAMPLE CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Sample output only. Submit your own photo in the workspace for a saved analysis.</p></div></div><button className="upload-row" onClick={openWorkspace}><Upload size={17} /><span>ANALYZE YOUR CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD SAMPLE REPORT" : "SAMPLE REPORT AVAILABLE AFTER DEMO"}</span><span className="mono">HTML</span></button></aside>
         </div>
       </section>
@@ -148,6 +151,7 @@ export default function Home() {
       <section id="learning" className="learning section-dark"><div className="section-kicker"><span>( 03 )</span><span>THE LEARNING LOOP</span><span>BUILD / REPEAT</span></div><div className="learning-grid"><div><h2>THE MISTAKE<br />IS THE <i>TEACHER.</i></h2><p className="learning-lede">CircuitSight keeps a record of recurring mistakes — reversed polarity, floating grounds, missing resistors — and turns the pattern into a personal electronics learning profile.</p><button className="text-link" onClick={() => alert("Learning profile preview coming soon.")}>EXPLORE THE LEARNING LOOP <ArrowUpRight size={18} /></button></div><div className="learning-graphic"><div className="giant-number">03</div><div className="loop-node node-1">CAPTURE</div><div className="loop-node node-2">NOTICE</div><div className="loop-node node-3">CORRECT</div><div className="loop-node node-4">REMEMBER</div><svg viewBox="0 0 440 330" aria-hidden="true"><path d="M220 28 C370 28 410 100 370 180 C330 260 118 290 65 190 C12 90 105 26 220 28Z" /></svg></div></div></section>
 
       <footer className="footer"><div className="footer-brand"><img src={markImage} alt="" /><span>CIRCUITSIGHT <i>AI</i></span></div><p>POINT. SCAN. UNDERSTAND. CORRECT.</p><span className="mono">© 2026 / SIGNAL LAB</span></footer>
+      <ImagePreviewDialog src={scannerImage} alt="Sample breadboard circuit" open={samplePreviewOpen} onClose={() => setSamplePreviewOpen(false)} />
     </main>
   );
 }
