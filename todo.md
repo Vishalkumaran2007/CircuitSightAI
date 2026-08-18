@@ -340,3 +340,8 @@
 
 - [x] Make all side-by-side light/dark preview labels and status text clearly readable against their preview surfaces.
 - [x] Add regression coverage and verify the preview contrast in both modes.
+
+# GitHub Synchronization
+
+- [ ] Commit and push the current CircuitSight AI project state to Vishalkumaran2007/CircuitSightAI.
+- [ ] Verify the pushed branch and commit on GitHub.
