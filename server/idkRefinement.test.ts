@@ -54,6 +54,10 @@ describe("IDK refinement contracts", () => {
     expect(page).toContain("BACK TO SETTINGS");
     expect(css).toContain(".palette-grid { grid-template-columns: repeat(4, minmax(0, 1fr));");
     expect(css).toContain("@media (max-width: 760px) { .palette-grid { grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(css).toContain("/* Readability audit: keep supporting text dense enough across every paired theme */");
+    for (const token of ["--background", "--surface-1", "--foreground", "--text-soft", "--muted", "--border", "--acid"]) {
+      expect(css).toContain(token);
+    }
   });
 
   it("limits appearance controls to Home and Visual Signal", () => {

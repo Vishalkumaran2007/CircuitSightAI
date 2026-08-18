@@ -317,3 +317,9 @@
 
 - [x] Replace the current Visual Signal theme definitions with the approved light and dark reference combinations.
 - [x] Apply paired background, surface, text, and accent tokens with persistence, accessibility, and responsive verification.
+
+# All-Theme Font Readability Audit
+
+- [x] Audit route-level text tokens across all paired light and dark Visual Signal themes.
+- [x] Strengthen low-density font colors and muted labels where needed without changing core behavior.
+- [x] Add regression coverage and verify representative routes and theme variants visually.
