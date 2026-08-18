@@ -289,8 +289,11 @@ class SDKServer {
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
 
-    // If user is not in the database, synchronize it from the OAuth server.
+    // If user not in DB, sync from OAuth server automatically
     if (!user) {
+      if (sessionUserId.startsWith("supabase:")) {
+        throw ForbiddenError("Verified email user is not registered");
+      }
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionToken ?? "");
         await db.upsertUser({

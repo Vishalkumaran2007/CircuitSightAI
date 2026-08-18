@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { CircuitFeedback, CircuitMessage, CircuitThread, IdkPreferences, InsertCircuitFeedback, InsertIdkPreferences, InsertUser, circuitFeedback, circuitMessages, circuitThreads, idkPreferences, users } from "../drizzle/schema";
+import { CircuitMessage, CircuitThread, InsertUser, circuitMessages, circuitThreads, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -59,6 +59,11 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = 'admin';
       updateSet.role = 'admin';
     }
+    if (user.emailVerified !== undefined) {
+      values.emailVerified = user.emailVerified;
+      updateSet.emailVerified = user.emailVerified;
+    }
+
     if (!values.lastSignedIn) {
       values.lastSignedIn = new Date();
     }
@@ -86,22 +91,6 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
-}
-
-export async function getIdkPreferences(userId: number): Promise<IdkPreferences | undefined> {
-  const db = await getDb();
-  if (!db) return undefined;
-  const result = await db.select().from(idkPreferences).where(eq(idkPreferences.userId, userId)).limit(1);
-  return result[0];
-}
-
-export async function upsertIdkPreferences(userId: number, values: Omit<InsertIdkPreferences, "id" | "userId" | "createdAt" | "updatedAt">): Promise<IdkPreferences> {
-  const db = await getDb();
-  if (!db) throw new Error("Database is unavailable.");
-  await db.insert(idkPreferences).values({ userId, ...values }).onDuplicateKeyUpdate({ set: values });
-  const preferences = await getIdkPreferences(userId);
-  if (!preferences) throw new Error("IDK preferences could not be saved.");
-  return preferences;
 }
 
 export async function listCircuitThreads(userId: number): Promise<CircuitThread[]> {
@@ -134,18 +123,6 @@ export async function createCircuitThread(userId: number, title: string): Promis
   const thread = await getCircuitThread(userId, threadId);
   if (!thread) throw new Error("Circuit thread could not be created.");
   return thread;
-}
-
-export async function addCircuitFeedback(input: Omit<InsertCircuitFeedback, "id" | "createdAt" | "reviewStatus">): Promise<CircuitFeedback> {
-  const thread = await getCircuitThread(input.userId, input.threadId);
-  if (!thread) throw new Error("Circuit thread was not found.");
-  const db = await getDb();
-  if (!db) throw new Error("Database is unavailable.");
-  const result = await db.insert(circuitFeedback).values({ ...input, reviewStatus: "pending" });
-  const feedbackId = Number((result as unknown as [{ insertId: number }])[0]?.insertId);
-  const rows = await db.select().from(circuitFeedback).where(eq(circuitFeedback.id, feedbackId)).limit(1);
-  if (!rows[0]) throw new Error("Feedback could not be saved.");
-  return rows[0];
 }
 
 export async function addCircuitMessage(input: {

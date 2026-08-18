@@ -1,32 +1,14 @@
 /* Kinetic Circuit Brutalism: dark-first shell, single editorial route, no generic dashboard chrome. */
-import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch, useLocation } from "wouter";
+import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Workspace from "./pages/Workspace";
-import Learning from "./pages/Learning";
-import RouteTransition from "./components/RouteTransition";
-import ThemeToggle from "./components/ThemeToggle";
-import Personalization from "./pages/Personalization";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import Help from "./pages/Help";
-import SwitchAccount from "./pages/SwitchAccount";
-import VisualSignal from "./pages/VisualSignal";
-
-const APPEARANCE_ROUTES = new Set(["/", "/visual-signal"]);
-
-export function AppearanceLayer() {
-  const [location] = useLocation();
-  if (!APPEARANCE_ROUTES.has(location)) return null;
-  return <ThemeToggle homeDropdown={location === "/"} />;
-}
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -36,13 +18,6 @@ function Router() {
       <Route path="/auth" component={Auth} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/workspace" component={Workspace} />
-      <Route path="/learning" component={Learning} />
-      <Route path="/personalization" component={Personalization} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/settings" component={Settings} />
-      <Route path="/help" component={Help} />
-      <Route path="/switch-account" component={SwitchAccount} />
-      <Route path="/visual-signal" component={VisualSignal} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -52,12 +27,10 @@ function Router() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark" switchable>
+      <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster theme="dark" />
           <Router />
-          <RouteTransition />
-          <AppearanceLayer />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

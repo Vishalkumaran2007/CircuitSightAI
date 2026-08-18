@@ -1,8 +1,5 @@
 /* Kinetic Circuit Brutalism: asymmetric editorial layout, acid signal actions, hard borders, candid confidence states. */
-import React, { useEffect, useState } from "react";
-import { CircuitPdfReportAction } from "@/components/CircuitPdfReportAction";
-import { ImagePreviewButton } from "@/components/ImagePreviewButton";
-import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
+import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
@@ -11,13 +8,6 @@ import { ArrowDownRight, ArrowUpRight, Check, ChevronRight, Download, Menu, Scan
 const heroImage = "/manus-storage/circuitsight-hero_3e01ea1e.png";
 const scannerImage = "/manus-storage/circuitsight-scanner_401035d5.png";
 const markImage = "/manus-storage/circuitsight-mark_2688ce17.png";
-
-const teamCredits = [
-  { no: "01", name: "VISHALKUMARAN V", role: "DEVELOPER", responsibility: "Full-stack development and technical implementation; AI integration and application architecture; circuit analysis workflow and platform development." },
-  { no: "02", name: "SANKARPRASATH S", role: "IDEA & CONCEPT", responsibility: "Originated the core idea behind CircuitSight AI; defined the initial problem statement and project concept; contributed to the project’s vision and direction." },
-  { no: "03", name: "ROHINI S", role: "UI/UX DESIGN", responsibility: "UI/UX selection and design direction; visual design decisions; user experience and interface planning." },
-  { no: "04", name: "SAYASREE T K", role: "R&D & PITCHING", responsibility: "Research and development work; project research and concept validation; pitch preparation and presentation strategy." },
-];
 
 const steps = [
   { no: "01", title: "CAPTURE", body: "Photograph or upload the physical circuit. A top-down angle gives the clearest read." },
@@ -33,23 +23,17 @@ const findings = [
   { label: "WIRE PATH", value: "73%", tone: "warning" },
 ];
 
-const sampleReportAnalysis = {
-  summary: "The visible breadboard contains an LED, resistor, and multi-color wire path with one uncertain return route.",
-  diagnosis: "Inspect the visible ground connection and confirm the LED polarity before energizing the circuit.",
-  confidence: 92,
-  findings: findings.map(item => ({ label: item.label, status: item.tone === "warning" ? "uncertain" : "observed", confidence: Number.parseInt(item.value, 10), detail: item.tone === "warning" ? "The wire path is partly obscured in the sample image." : "The component or connection is visibly present in the sample image." })),
-  recommendedSteps: ["Confirm LED polarity and series resistor placement.", "Trace the ground rail end-to-end with power disconnected.", "Retake the photo from a top-down angle if any junction remains obscured."],
-  uncertaintyNotice: "The sample image does not prove electrical continuity. Treat the wire-path result as an inspection lead, not a confirmed electrical fact.",
-};
+const teamCredits = [
+  { number: "01", name: "VISHALKUMARAN V", role: "DEVELOPER", responsibility: "Full-stack development and technical implementation; AI integration and application architecture; circuit analysis workflow and platform development.", href: "https://vishalkumaran2007.github.io/Portfolio/" },
+  { number: "02", name: "SANKARPRASATH S", role: "IDEA & CONCEPT", responsibility: "Originated the core idea behind CircuitSight AI; defined the initial problem statement and project concept; contributed to the project's vision and direction." },
+  { number: "03", name: "ROHINI S", role: "UI/UX DESIGN", responsibility: "UI/UX selection and design direction; visual design decisions; user experience and interface planning." },
+  { number: "04", name: "SAYASREE T K", role: "R&D & PITCHING", responsibility: "Research and development work; project research and concept validation; pitch preparation and presentation strategy." },
+];
 
 function downloadCorrectionReport() {
   const generatedAt = new Date().toLocaleString();
-  const isLight = document.documentElement.classList.contains("light-theme");
-  const palette = isLight
-    ? { background: "#FFFFFF", foreground: "#000000", accent: "#000000", border: "#000000", muted: "#555555", warning: "#8A5700", warningSurface: "#F2F2F2" }
-    : { background: "#000000", foreground: "#FFFFFF", accent: "#C4B5FD", border: "#2B2B2B", muted: "#A7A7A7", warning: "#F5B83D", warningSurface: "#171717" };
   const findingsMarkup = findings.map((item) => `<tr><td>${item.label}</td><td>${item.value}</td><td>${item.tone === "warning" ? "UNCERTAIN" : "VERIFIED"}</td></tr>`).join("");
-  const report = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>CircuitSight AI Correction Report</title><style>body{background:${palette.background};color:${palette.foreground};font:16px Arial,sans-serif;max-width:820px;margin:0 auto;padding:48px}h1{font-size:48px;line-height:.95;letter-spacing:-.06em;margin:12px 0 28px}h1 span{color:${palette.accent}}h2{border-top:2px solid ${palette.border};padding-top:18px;margin-top:44px;font-size:18px;letter-spacing:.08em}p{color:${palette.muted};line-height:1.55}.meta{color:${palette.muted};font:12px monospace;letter-spacing:.08em}.score{font:700 64px monospace;color:${palette.accent};margin:18px 0}table{border-collapse:collapse;width:100%;margin-top:18px}td{border-bottom:1px solid ${palette.border};padding:14px 8px;text-align:left}td:last-child{color:${palette.accent};font-family:monospace}.warning{border-left:4px solid ${palette.warning};padding:14px 18px;background:${palette.warningSurface};color:${palette.warning}}.footer{border-top:2px solid ${palette.border};margin-top:54px;padding-top:18px;color:${palette.muted};font:11px monospace}</style></head><body><div class="meta">CIRCUITSIGHT AI / CORRECTION REPORT</div><h1>SCAN <span>07</span><br>ANALYSIS.</h1><div class="meta">GENERATED ${generatedAt}</div><div class="score">92%</div><div class="meta">OVERALL CONFIDENCE</div><h2>DETECTED FINDINGS</h2><table><thead><tr><td>FINDING</td><td>CONFIDENCE</td><td>STATUS</td></tr></thead><tbody>${findingsMarkup}</tbody></table><h2>RECOMMENDED CORRECTION</h2><p>Inspect the visible wire path around the ground connection. Re-photograph the circuit from a top-down angle with all component labels and wire junctions visible before making a permanent correction.</p><div class="warning"><strong>UNCERTAINTY NOTICE</strong><br><br>Some connections cannot be verified confidently from this image. Treat the wire-path result as a lead for inspection, not a confirmed electrical fact.</div><h2>LEARNING NOTE</h2><p>Use this scan to practice tracing signal flow from source to ground. Confirm polarity, resistor placement, and continuity visually before powering the circuit.</p><div class="footer">POINT. SCAN. UNDERSTAND. CORRECT. / CIRCUITSIGHT AI</div></body></html>`;
+  const report = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>CircuitSight AI Correction Report</title><style>body{background:#09090b;color:#fafafa;font:16px Arial,sans-serif;max-width:820px;margin:0 auto;padding:48px}h1{font-size:48px;line-height:.95;letter-spacing:-.06em;margin:12px 0 28px}h1 span{color:#dfe104}h2{border-top:2px solid #3f3f46;padding-top:18px;margin-top:44px;font-size:18px;letter-spacing:.08em}p{color:#c4c4c9;line-height:1.55}.meta{color:#a1a1aa;font:12px monospace;letter-spacing:.08em}.score{font:700 64px monospace;color:#dfe104;margin:18px 0}table{border-collapse:collapse;width:100%;margin-top:18px}td{border-bottom:1px solid #3f3f46;padding:14px 8px;text-align:left}td:last-child{color:#dfe104;font-family:monospace}.warning{border-left:4px solid #f5b83d;padding:14px 18px;background:#17171a;color:#f5b83d}.footer{border-top:2px solid #3f3f46;margin-top:54px;padding-top:18px;color:#a1a1aa;font:11px monospace}</style></head><body><div class="meta">CIRCUITSIGHT AI / CORRECTION REPORT</div><h1>SCAN <span>07</span><br>ANALYSIS.</h1><div class="meta">GENERATED ${generatedAt}</div><div class="score">92%</div><div class="meta">OVERALL CONFIDENCE</div><h2>DETECTED FINDINGS</h2><table><thead><tr><td>FINDING</td><td>CONFIDENCE</td><td>STATUS</td></tr></thead><tbody>${findingsMarkup}</tbody></table><h2>RECOMMENDED CORRECTION</h2><p>Inspect the visible wire path around the ground connection. Re-photograph the circuit from a top-down angle with all component labels and wire junctions visible before making a permanent correction.</p><div class="warning"><strong>UNCERTAINTY NOTICE</strong><br><br>Some connections cannot be verified confidently from this image. Treat the wire-path result as a lead for inspection, not a confirmed electrical fact.</div><h2>LEARNING NOTE</h2><p>Use this scan to practice tracing signal flow from source to ground. Confirm polarity, resistor placement, and continuity visually before powering the circuit.</p><div class="footer">POINT. SCAN. UNDERSTAND. CORRECT. / CIRCUITSIGHT AI</div></body></html>`;
   const blob = new Blob([report], { type: "text/html;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -65,25 +49,13 @@ export default function Home() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scanState, setScanState] = useState<"idle" | "scanning" | "complete">(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("report") === "sample" ? "complete" : "idle");
-  const [sampleReportImage, setSampleReportImage] = useState<string | null>(null);
+  const [scanState, setScanState] = useState<"idle" | "scanning" | "complete">("idle");
   const [routeTarget, setRouteTarget] = useState<"auth" | "workspace" | null>(null);
-  const [samplePreviewOpen, setSamplePreviewOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "sample");
   const reduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (scanState !== "complete") {
-      setSampleReportImage(null);
-      return;
-    }
-    let active = true;
-    fetch(scannerImage).then(response => response.blob()).then(blob => new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onloadend = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(blob); })).then(dataUrl => { if (active) setSampleReportImage(dataUrl); }).catch(() => { if (active) setSampleReportImage(null); });
-    return () => { active = false; };
-  }, [scanState]);
 
   const openWorkspace = () => {
     if (authLoading || routeTarget) return;
-    const target = user ? "workspace" : "auth";
+    const target = user?.emailVerified ? "workspace" : "auth";
     setRouteTarget(target);
     const destination = target === "workspace" ? "/workspace" : "/auth";
     window.setTimeout(() => setLocation(destination), reduceMotion ? 0 : 280);
@@ -121,12 +93,12 @@ export default function Home() {
           <button onClick={() => scrollTo("lab")}>LAB</button>
           <button onClick={() => scrollTo("learning")}>LEARNING</button>
           <div className="mobile-nav-actions">
-            <button className="nav-quiet" onClick={() => setLocation("/auth")}>SIGN IN</button>
+            <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
             <button className="button button-acid" onClick={openWorkspace} aria-disabled={authLoading}>START SCANNING <ArrowUpRight size={16} /></button>
           </div>
         </nav>
         <div className="nav-actions">
-          <button className="nav-quiet" onClick={() => setLocation("/auth")}>SIGN IN</button>
+          <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
           <button className="button button-acid nav-cta" onClick={openWorkspace} aria-disabled={authLoading}>START SCANNING <ArrowUpRight size={16} /></button>
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button>
         </div>
@@ -137,7 +109,7 @@ export default function Home() {
         <div className="hero-trace trace-two" aria-hidden="true"><span /><span /><span /></div>
         <div className="hero-copy">
           <p className="eyebrow"><span className="live-dot" /> COMPUTER VISION / ELECTRONICS LAB 01</p>
-          <h1 id="hero-title">YOUR<br /><em>CIRCUIT</em><br /><span className="hero-tail">IS<span className="hero-mobile-break"><br /></span> TALKING.</span></h1>
+          <h1 id="hero-title">YOUR<br /><em>CIRCUIT</em><br />IS TALKING.</h1>
           <p className="hero-lede">Photograph your physical circuit. CircuitSight AI identifies components, traces visible connections, detects likely mistakes, explains the problem, and guides you toward the correct circuit.</p>
           <div className="hero-actions">
             <button className="button button-acid button-large" onClick={openWorkspace} aria-disabled={authLoading}>SCAN A CIRCUIT <ArrowUpRight size={19} /></button>
@@ -173,19 +145,18 @@ export default function Home() {
         <div className="section-kicker lab-kicker"><span>( 02 )</span><span>THE CIRCUIT LAB</span><span>SAMPLE CIRCUIT DEMO</span></div>
         <div className="lab-heading"><h2>POINT.<br />SCAN.<br /><i>UNDERSTAND.</i></h2><div className="lab-side-note"><span className="mono">SAMPLE CIRCUIT / NOT SAVED</span><p>This teaching sample shows how CircuitSight presents an analysis. It is not user data and is never saved to your account.</p><button className="button button-outline" onClick={startScan}><ScanLine size={17} /> {scanState === "idle" ? "RUN SAMPLE DEMO" : scanState === "scanning" ? "ANALYZING SAMPLE..." : "SAMPLE COMPLETE"}</button></div></div>
         <div className="scanner-frame">
-          <div className="scanner-image"><img src={scannerImage} alt="Circuit board prepared for scanning" /><div className={`scan-beam ${scanState !== "idle" ? "active" : ""}`} /><div className="scan-target target-a" /><div className="scan-target target-b" /><div className="scan-target target-c" /><div className="image-label mono">INPUT / BREADBOARD_07.JPG</div><ImagePreviewButton className="image-preview-trigger" label="PREVIEW IMAGE" onClick={() => setSamplePreviewOpen(true)} /></div>
-          <aside className="analysis-panel"><div className="analysis-top"><span>SAMPLE ANALYSIS / DEMO</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>SAMPLE CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Sample output only. Submit your own photo in the workspace for a saved analysis.</p></div></div><button className="upload-row" onClick={openWorkspace}><Upload size={17} /><span>ANALYZE YOUR CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD SAMPLE REPORT" : "SAMPLE REPORT AVAILABLE AFTER DEMO"}</span><span className="mono">HTML</span></button>{scanState === "complete" && <CircuitPdfReportAction report={sampleReportImage ? { analysis: sampleReportAnalysis, imageDataUrl: sampleReportImage, imageMimeType: "image/png", title: "SAMPLE CIRCUIT DEMO" } : null} />}</aside>
+          <div className="scanner-image"><img src={scannerImage} alt="Circuit board prepared for scanning" /><div className={`scan-beam ${scanState !== "idle" ? "active" : ""}`} /><div className="scan-target target-a" /><div className="scan-target target-b" /><div className="scan-target target-c" /><div className="image-label mono">INPUT / BREADBOARD_07.JPG</div></div>
+          <aside className="analysis-panel"><div className="analysis-top"><span>SAMPLE ANALYSIS / DEMO</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>SAMPLE CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Sample output only. Submit your own photo in the workspace for a saved analysis.</p></div></div><button className="upload-row" onClick={openWorkspace}><Upload size={17} /><span>ANALYZE YOUR CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD SAMPLE REPORT" : "SAMPLE REPORT AVAILABLE AFTER DEMO"}</span><span className="mono">HTML</span></button></aside>
         </div>
       </section>
 
       <div className="marquee marquee-dark" aria-label="Analysis promise"><div>SCAN <b>•</b> ANALYZE <b>•</b> UNDERSTAND <b>•</b> CORRECT <b>•</b> LEARN <b>•</b> SCAN <b>•</b> ANALYZE <b>•</b> UNDERSTAND <b>•</b> CORRECT <b>•</b> LEARN <b>•</b></div></div>
 
-      <section id="learning" className="learning section-dark"><div className="section-kicker"><span>( 03 )</span><span>THE LEARNING LOOP</span><span>BUILD / REPEAT</span></div><div className="learning-grid"><div><h2>THE MISTAKE<br />IS THE <i>TEACHER.</i></h2><p className="learning-lede">CircuitSight keeps a record of recurring mistakes — reversed polarity, floating grounds, missing resistors — and turns the pattern into a personal electronics learning profile.</p><button className="text-link" onClick={() => setLocation("/learning")}>EXPLORE THE LEARNING LOOP <ArrowUpRight size={18} /></button></div><div className="learning-graphic"><div className="giant-number">03</div><div className="loop-node node-1">CAPTURE</div><div className="loop-node node-2">NOTICE</div><div className="loop-node node-3">CORRECT</div><div className="loop-node node-4">REMEMBER</div><svg viewBox="0 0 440 330" aria-hidden="true"><path d="M220 28 C370 28 410 100 370 180 C330 260 118 290 65 190 C12 90 105 26 220 28Z" /></svg></div></div></section>
+      <section id="learning" className="learning section-dark"><div className="section-kicker"><span>( 03 )</span><span>THE LEARNING LOOP</span><span>BUILD / REPEAT</span></div><div className="learning-grid"><div><h2>THE MISTAKE<br />IS THE <i>TEACHER.</i></h2><p className="learning-lede">CircuitSight keeps a record of recurring mistakes — reversed polarity, floating grounds, missing resistors — and turns the pattern into a personal electronics learning profile.</p><button className="text-link" onClick={() => alert("Learning profile preview coming soon.")}>EXPLORE THE LEARNING LOOP <ArrowUpRight size={18} /></button></div><div className="learning-graphic"><div className="giant-number">03</div><div className="loop-node node-1">CAPTURE</div><div className="loop-node node-2">NOTICE</div><div className="loop-node node-3">CORRECT</div><div className="loop-node node-4">REMEMBER</div><svg viewBox="0 0 440 330" aria-hidden="true"><path d="M220 28 C370 28 410 100 370 180 C330 260 118 290 65 190 C12 90 105 26 220 28Z" /></svg></div></div></section>
 
-      <section id="team" className="team-credits section-dark" aria-labelledby="team-title"><div className="section-kicker"><span>( 04 )</span><span>TEAM / CREDITS</span><span>BUILT BY PEOPLE</span></div><div className="team-heading"><div><p className="eyebrow"><span className="live-dot" /> CIRCUITSIGHT / CORE TEAM</p><h2 id="team-title">BUILT<br />BY <i>US.</i></h2></div><p className="team-intro">The people behind the signal: distinct disciplines, one shared direction, and a platform built to turn circuit mistakes into understanding.</p></div><div className="team-grid">{teamCredits.map((member, index) => <motion.article className={`team-card team-card-${index + 1}`} key={member.no} initial={reduceMotion ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.07 }}><div className="team-card-top"><span className="team-number mono">{member.no}</span><span className="team-mark" aria-hidden="true">+</span></div><h3>{member.name}</h3><p className="team-role mono">{member.role}</p><div className="team-rule" /><p className="team-responsibility">{member.responsibility}</p></motion.article>)}</div><p className="team-footer-credit mono">BUILT BY A TEAM OF ENGINEERS, DESIGNERS &amp; RESEARCHERS.</p></section>
+      <section id="team" className="team-section" aria-labelledby="team-title"><div className="section-kicker"><span>( 04 )</span><span>TEAM / CREDITS</span><span>BUILT BY</span></div><div className="team-heading"><h2 id="team-title">THE <i>TEAM.</i></h2><p>Four distinct disciplines. One diagnostic signal.</p></div><div className="team-grid">{teamCredits.map((member) => { const card = <div className="team-card-inner"><span className="team-number mono">{member.number}</span><div className="team-card-heading"><h3>{member.name}</h3><span>{member.role}</span></div><p>{member.responsibility}</p><ArrowUpRight className="team-card-arrow" size={18} /></div>; return member.href ? <a className="team-card team-card-link" href={member.href} target="_blank" rel="noreferrer" key={member.number} aria-label={`Open ${member.name} portfolio`}>{card}</a> : <article className="team-card" key={member.number}>{card}</article>; })}</div><p className="team-footer mono">BUILT BY A TEAM OF ENGINEERS, DESIGNERS &amp; RESEARCHERS.</p></section>
 
       <footer className="footer"><div className="footer-brand"><img src={markImage} alt="" /><span>CIRCUITSIGHT <i>AI</i></span></div><p>POINT. SCAN. UNDERSTAND. CORRECT.</p><span className="mono">© 2026 / SIGNAL LAB</span></footer>
-      <ImagePreviewDialog src={scannerImage} alt="Sample breadboard circuit" open={samplePreviewOpen} onClose={() => setSamplePreviewOpen(false)} />
     </main>
   );
 }
