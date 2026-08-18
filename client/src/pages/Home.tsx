@@ -1,5 +1,6 @@
 /* Kinetic Circuit Brutalism: asymmetric editorial layout, acid signal actions, hard borders, candid confidence states. */
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CircuitPdfReportAction } from "@/components/CircuitPdfReportAction";
 import { ImagePreviewButton } from "@/components/ImagePreviewButton";
 import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -25,6 +26,15 @@ const findings = [
   { label: "WIRE PATH", value: "73%", tone: "warning" },
 ];
 
+const sampleReportAnalysis = {
+  summary: "The visible breadboard contains an LED, resistor, and multi-color wire path with one uncertain return route.",
+  diagnosis: "Inspect the visible ground connection and confirm the LED polarity before energizing the circuit.",
+  confidence: 92,
+  findings: findings.map(item => ({ label: item.label, status: item.tone === "warning" ? "uncertain" : "observed", confidence: Number.parseInt(item.value, 10), detail: item.tone === "warning" ? "The wire path is partly obscured in the sample image." : "The component or connection is visibly present in the sample image." })),
+  recommendedSteps: ["Confirm LED polarity and series resistor placement.", "Trace the ground rail end-to-end with power disconnected.", "Retake the photo from a top-down angle if any junction remains obscured."],
+  uncertaintyNotice: "The sample image does not prove electrical continuity. Treat the wire-path result as an inspection lead, not a confirmed electrical fact.",
+};
+
 function downloadCorrectionReport() {
   const generatedAt = new Date().toLocaleString();
   const findingsMarkup = findings.map((item) => `<tr><td>${item.label}</td><td>${item.value}</td><td>${item.tone === "warning" ? "UNCERTAIN" : "VERIFIED"}</td></tr>`).join("");
@@ -44,10 +54,21 @@ export default function Home() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scanState, setScanState] = useState<"idle" | "scanning" | "complete">("idle");
+  const [scanState, setScanState] = useState<"idle" | "scanning" | "complete">(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("report") === "sample" ? "complete" : "idle");
+  const [sampleReportImage, setSampleReportImage] = useState<string | null>(null);
   const [routeTarget, setRouteTarget] = useState<"auth" | "workspace" | null>(null);
   const [samplePreviewOpen, setSamplePreviewOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "sample");
   const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (scanState !== "complete") {
+      setSampleReportImage(null);
+      return;
+    }
+    let active = true;
+    fetch(scannerImage).then(response => response.blob()).then(blob => new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onloadend = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(blob); })).then(dataUrl => { if (active) setSampleReportImage(dataUrl); }).catch(() => { if (active) setSampleReportImage(null); });
+    return () => { active = false; };
+  }, [scanState]);
 
   const openWorkspace = () => {
     if (authLoading || routeTarget) return;
@@ -142,7 +163,7 @@ export default function Home() {
         <div className="lab-heading"><h2>POINT.<br />SCAN.<br /><i>UNDERSTAND.</i></h2><div className="lab-side-note"><span className="mono">SAMPLE CIRCUIT / NOT SAVED</span><p>This teaching sample shows how CircuitSight presents an analysis. It is not user data and is never saved to your account.</p><button className="button button-outline" onClick={startScan}><ScanLine size={17} /> {scanState === "idle" ? "RUN SAMPLE DEMO" : scanState === "scanning" ? "ANALYZING SAMPLE..." : "SAMPLE COMPLETE"}</button></div></div>
         <div className="scanner-frame">
           <div className="scanner-image"><img src={scannerImage} alt="Circuit board prepared for scanning" /><div className={`scan-beam ${scanState !== "idle" ? "active" : ""}`} /><div className="scan-target target-a" /><div className="scan-target target-b" /><div className="scan-target target-c" /><div className="image-label mono">INPUT / BREADBOARD_07.JPG</div><ImagePreviewButton className="image-preview-trigger" label="PREVIEW IMAGE" onClick={() => setSamplePreviewOpen(true)} /></div>
-          <aside className="analysis-panel"><div className="analysis-top"><span>SAMPLE ANALYSIS / DEMO</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>SAMPLE CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Sample output only. Submit your own photo in the workspace for a saved analysis.</p></div></div><button className="upload-row" onClick={openWorkspace}><Upload size={17} /><span>ANALYZE YOUR CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD SAMPLE REPORT" : "SAMPLE REPORT AVAILABLE AFTER DEMO"}</span><span className="mono">HTML</span></button></aside>
+          <aside className="analysis-panel"><div className="analysis-top"><span>SAMPLE ANALYSIS / DEMO</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>SAMPLE CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Sample output only. Submit your own photo in the workspace for a saved analysis.</p></div></div><button className="upload-row" onClick={openWorkspace}><Upload size={17} /><span>ANALYZE YOUR CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD SAMPLE REPORT" : "SAMPLE REPORT AVAILABLE AFTER DEMO"}</span><span className="mono">HTML</span></button>{scanState === "complete" && <CircuitPdfReportAction report={sampleReportImage ? { analysis: sampleReportAnalysis, imageDataUrl: sampleReportImage, imageMimeType: "image/png", title: "SAMPLE CIRCUIT DEMO" } : null} />}</aside>
         </div>
       </section>
 

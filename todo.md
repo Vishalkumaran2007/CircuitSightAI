@@ -70,3 +70,18 @@
 
 - [x] Add a non-invasive sample-preview QA state for desktop and mobile visual verification.
 - [x] Add reproducible responsive stylesheet coverage for the opened preview dialog.
+
+# PDF Circuit Report Export
+
+- [x] Add a PDF export action for completed circuit analyses.
+- [x] Include the original uploaded circuit image and structured findings in the PDF.
+- [x] Verify disabled-before-analysis behavior, PDF content generation, responsive UI, tests, and production build.
+
+# PDF Export QA
+
+- [x] Add a non-invasive completed-report QA state that renders the PDF export action without manual authentication.
+- [x] Add reproducible responsive rendering coverage for the PDF export action at desktop and mobile breakpoints.
+
+# PDF Export Responsive Contract
+
+- [x] Add automated coverage for desktop and mobile PDF export action layout rules.
