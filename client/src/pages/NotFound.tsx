@@ -1,49 +1,37 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, Home } from "lucide-react";
-import { useLocation } from "wouter";
+/* Kinetic Circuit Brutalism: utility state uses dark lab ground, monospaced diagnostics, acid signal action, and PCB trace geometry. */
+import { ArrowUpRight, Home, ScanLine } from "lucide-react";
+import { Link } from "wouter";
+
+const markImage = "/manus-storage/circuitsight-mark_2688ce17.png";
 
 export default function NotFound() {
-  const [, setLocation] = useLocation();
-
-  const handleGoHome = () => {
-    setLocation("/");
-  };
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-      <Card className="w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-        <CardContent className="pt-8 pb-8 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse" />
-              <AlertCircle className="relative h-16 w-16 text-red-500" />
-            </div>
-          </div>
-
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">404</h1>
-
-          <h2 className="text-xl font-semibold text-slate-700 mb-4">
-            Page Not Found
-          </h2>
-
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            Sorry, the page you are looking for doesn't exist.
-            <br />
-            It may have been moved or deleted.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button
-              onClick={handleGoHome}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              <Home className="w-4 h-4 mr-2" />
-              Go Home
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <main className="site-shell diagnostic-page">
+      <header className="topbar">
+        <Link href="/" className="brand" aria-label="Return to CircuitSight AI home">
+          <img src={markImage} alt="" className="brand-mark" />
+          <span>CIRCUITSIGHT <i>AI</i></span>
+        </Link>
+        <span className="mono diagnostic-header">ROUTE MONITOR / 404</span>
+      </header>
+      <section className="diagnostic-state" aria-labelledby="diagnostic-title">
+        <div className="diagnostic-trace trace-left" aria-hidden="true"><span /><span /><span /></div>
+        <div className="diagnostic-trace trace-right" aria-hidden="true"><span /><span /><span /></div>
+        <div className="diagnostic-meta mono"><span><i className="live-dot" /> SIGNAL LOST</span><span>CONFIDENCE / 00%</span></div>
+        <div className="diagnostic-content">
+          <span className="diagnostic-code mono">ERR_ROUTE_NOT_FOUND / 404</span>
+          <h1 id="diagnostic-title">ROUTE<br /><em>SIGNAL</em><br />LOST.</h1>
+          <p>The requested path could not be traced through the CircuitSight system. Return to the scan field and pick up the signal again.</p>
+          <Link className="button button-acid button-large" href="/"><Home size={17} /> RETURN TO SCAN <ArrowUpRight size={17} /></Link>
+        </div>
+        <div className="diagnostic-panel">
+          <div className="diagnostic-panel-head mono"><span><ScanLine size={15} /> TRACE REPORT</span><span>01 / 01</span></div>
+          <div className="diagnostic-readout"><strong>404</strong><span>NO VISIBLE CONNECTION</span></div>
+          <div className="diagnostic-rule"><span /><span /> <span /></div>
+          <p className="mono">The system can analyze what it can see. This route is outside the current frame.</p>
+        </div>
+      </section>
+      <div className="marquee marquee-yellow"><div>RETURN TO SCAN <b>•</b> TRACE THE SIGNAL <b>•</b> PICK UP THE THREAD <b>•</b> RETURN TO SCAN <b>•</b> TRACE THE SIGNAL <b>•</b> PICK UP THE THREAD <b>•</b></div></div>
+    </main>
   );
 }
