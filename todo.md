@@ -85,3 +85,19 @@
 # PDF Export Responsive Contract
 
 - [x] Add automated coverage for desktop and mobile PDF export action layout rules.
+
+# Learning Loop Profile
+
+- [x] Replace the Learning Loop placeholder alert with real navigation.
+- [x] Build a responsive Learning Loop profile page with honest empty and progress states.
+- [x] Verify keyboard navigation, mobile presentation, tests, and production build.
+
+# Learning Loop Verification Follow-up
+
+- [x] Add an explicit auth-sync loading state to the Learning Loop profile panel.
+- [x] Add reproducible keyboard-accessibility coverage for Learning Loop links, buttons, and visible focus states.
+
+# Learning Loop Accessibility Coverage
+
+- [x] Add rendered markup assertions for Learning Loop navigation links and primary action buttons across session states.
+- [x] Tie the rendered control coverage to the visible focus-style contract.
