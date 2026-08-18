@@ -406,3 +406,13 @@
 .light-theme .dashboard-card > span { color: #333333; }
 .light-theme .dashboard-card h3 { color: #000000; }
 .light-theme .dashboard-card p { color: #333333; }
+
+/* Loading transition light-theme contrast */
+.light-theme .route-transition { background: rgba(250, 250, 250, .97); color: #09090b; }
+.light-theme .route-transition-grid { opacity: .2; background-image: linear-gradient(rgba(9,9,11,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(9,9,11,.12) 1px, transparent 1px); }
+.light-theme .route-transition-content { background: #ffffff; color: #09090b; border-color: #09090b; box-shadow: 10px 10px 0 var(--acid); }
+.light-theme .route-transition-content p { color: #3f3f46; }
+.light-theme .route-transition-content strong { color: #09090b; }
+.light-theme .route-transition-progress { background: #d4d4d8; }
+.light-theme .route-transition-footer { color: #3f3f46; }
+.light-theme .route-transition-footer svg:last-child { color: #09090b; }

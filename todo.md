@@ -296,3 +296,8 @@
 
 - [x] Make dashboard numeric readouts and large decorative numbers explicitly readable in light mode.
 - [x] Add regression coverage and verify the fix in light and dark themes.
+
+# Loading Transition Light Theme Contrast
+
+- [x] Make loading transition heading, status text, and progress treatment readable in light mode.
+- [x] Add regression coverage and verify the loading transition in light and dark themes.
