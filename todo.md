@@ -40,3 +40,8 @@
 
 - [x] Make the Vishalkumaran V team card open https://vishalkumaran2007.github.io/Portfolio/ while leaving other team cards unchanged.
 - [x] Add regression coverage and publish the targeted interaction change.
+
+# GitHub Portfolio-Link Sync
+
+- [ ] Push the latest Vishalkumaran V portfolio-link checkpoint and current project state to Vishalkumaran2007/CircuitSightAI.
+- [ ] Verify the pushed GitHub branch and commit.
