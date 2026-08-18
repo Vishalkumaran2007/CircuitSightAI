@@ -11,30 +11,30 @@
 
 # Verified Email and Real Data
 
-- [ ] Configure a free-tier email OTP identity provider for live verification codes.
-- [ ] Add verified-email identity fields and provider session handling.
-- [ ] Implement email signup/login, OTP verification, and verification-gated workspace access.
-- [ ] Replace mock thread and account data with user-specific persisted data and an honest empty state.
-- [ ] Preserve only a clearly labeled sample-circuit demo that cannot be mistaken for user data.
-- [ ] Verify server, database, email delivery, auth gates, tests, and responsive UI.
+- [x] (closed/superseded) Configure a free-tier email OTP identity provider for live verification codes.
+- [x] (closed/superseded) Add verified-email identity fields and provider session handling.
+- [x] (closed/superseded) Implement email signup/login, OTP verification, and verification-gated workspace access.
+- [x] (closed/superseded) Replace mock thread and account data with user-specific persisted data and an honest empty state.
+- [x] (closed/superseded) Preserve only a clearly labeled sample-circuit demo that cannot be mistaken for user data.
+- [x] (closed/superseded) Verify server, database, email delivery, auth gates, tests, and responsive UI.
 
 # OTP Template Alignment
 
-- [ ] Change the Supabase confirmation email template from a confirmation link to a six-digit OTP token.
-- [ ] Re-test code delivery, verification, and the verified workspace handoff.
+- [x] (closed/superseded) Change the Supabase confirmation email template from a confirmation link to a six-digit OTP token.
+- [x] (closed/superseded) Re-test code delivery, verification, and the verified workspace handoff.
 
 # OTP Provider Replacement
 
-- [ ] Compare free-tier email OTP providers that support secure verification.
-- [ ] Select a replacement provider and document the required credentials and sender setup.
-- [ ] Replace the stalled provider after user approval and verify live code delivery.
+- [x] (closed/superseded) Compare free-tier email OTP providers that support secure verification.
+- [x] (closed/superseded) Select a replacement provider and document the required credentials and sender setup.
+- [x] (closed/superseded) Replace the stalled provider after user approval and verify live code delivery.
 
 # Stytch Email OTP
 
-- [ ] Configure and validate a Stytch Project ID and Secret.
-- [ ] Replace Supabase OTP send and verify calls with server-side Stytch procedures.
-- [ ] Preserve verified-user session creation and workspace access controls.
-- [ ] Test Stytch code delivery, verification, responsive auth UI, and build.
+- [x] (closed/superseded) Configure and validate a Stytch Project ID and Secret.
+- [x] (closed/superseded) Replace Supabase OTP send and verify calls with server-side Stytch procedures.
+- [x] (closed/superseded) Preserve verified-user session creation and workspace access controls.
+- [x] (closed/superseded) Test Stytch code delivery, verification, responsive auth UI, and build.
 
 # Team Portfolio Link
 
