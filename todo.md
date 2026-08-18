@@ -43,10 +43,15 @@
 
 # GitHub Portfolio-Link Sync
 
-- [ ] Push the latest Vishalkumaran V portfolio-link checkpoint and current project state to Vishalkumaran2007/CircuitSightAI.
-- [ ] Verify the pushed GitHub branch and commit.
+- [x] Push the latest Vishalkumaran V portfolio-link checkpoint and current project state to Vishalkumaran2007/CircuitSightAI.
+- [x] Verify the pushed GitHub branch and commit.
 
 # Team Credits Order
 
 - [x] Reorder the TEAM / CREDITS cards to 01 Sankarprasath, 02 Rohini, 03 Vishalkumaran, and 04 Sayasree.
 - [x] Preserve the Vishalkumaran portfolio link and verify the reordered section before publishing.
+
+# GitHub Full-State Cross-Verification
+
+- [ ] Synchronize the latest README and project files to Vishalkumaran2007/CircuitSightAI.
+- [ ] Cross-verify local main, GitHub main, commit SHA, and clean working tree.
