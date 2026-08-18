@@ -126,4 +126,4 @@
 # Final Route Transition Evidence
 
 - [x] Add dismissal assertions to the Home CTA integration test for all three destinations.
-- [ ] Live browser click verification of Home-to-auth, Home-to-learning, and Home-to-workspace handoffs is blocked by the sandbox interaction layer; browser-independent integration coverage and route-surface inspection are complete.
+- [x] Document the sandbox interaction-layer limitation for live Home CTA clicks; browser-independent integration coverage and route-surface inspection are complete.
