@@ -1,7 +1,7 @@
 /* Kinetic Circuit Brutalism: asymmetric editorial layout, acid signal actions, hard borders, candid confidence states. */
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight, Check, ChevronRight, Menu, ScanLine, Upload, X, Zap } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Check, ChevronRight, Download, Menu, ScanLine, Upload, X, Zap } from "lucide-react";
 
 const heroImage = "/manus-storage/circuitsight-hero_3e01ea1e.png";
 const scannerImage = "/manus-storage/circuitsight-scanner_401035d5.png";
@@ -20,6 +20,21 @@ const findings = [
   { label: "GROUND CONNECTION", value: "91%", tone: "verified" },
   { label: "WIRE PATH", value: "73%", tone: "warning" },
 ];
+
+function downloadCorrectionReport() {
+  const generatedAt = new Date().toLocaleString();
+  const findingsMarkup = findings.map((item) => `<tr><td>${item.label}</td><td>${item.value}</td><td>${item.tone === "warning" ? "UNCERTAIN" : "VERIFIED"}</td></tr>`).join("");
+  const report = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>CircuitSight AI Correction Report</title><style>body{background:#09090b;color:#fafafa;font:16px Arial,sans-serif;max-width:820px;margin:0 auto;padding:48px}h1{font-size:48px;line-height:.95;letter-spacing:-.06em;margin:12px 0 28px}h1 span{color:#dfe104}h2{border-top:2px solid #3f3f46;padding-top:18px;margin-top:44px;font-size:18px;letter-spacing:.08em}p{color:#c4c4c9;line-height:1.55}.meta{color:#a1a1aa;font:12px monospace;letter-spacing:.08em}.score{font:700 64px monospace;color:#dfe104;margin:18px 0}table{border-collapse:collapse;width:100%;margin-top:18px}td{border-bottom:1px solid #3f3f46;padding:14px 8px;text-align:left}td:last-child{color:#dfe104;font-family:monospace}.warning{border-left:4px solid #f5b83d;padding:14px 18px;background:#17171a;color:#f5b83d}.footer{border-top:2px solid #3f3f46;margin-top:54px;padding-top:18px;color:#a1a1aa;font:11px monospace}</style></head><body><div class="meta">CIRCUITSIGHT AI / CORRECTION REPORT</div><h1>SCAN <span>07</span><br>ANALYSIS.</h1><div class="meta">GENERATED ${generatedAt}</div><div class="score">92%</div><div class="meta">OVERALL CONFIDENCE</div><h2>DETECTED FINDINGS</h2><table><thead><tr><td>FINDING</td><td>CONFIDENCE</td><td>STATUS</td></tr></thead><tbody>${findingsMarkup}</tbody></table><h2>RECOMMENDED CORRECTION</h2><p>Inspect the visible wire path around the ground connection. Re-photograph the circuit from a top-down angle with all component labels and wire junctions visible before making a permanent correction.</p><div class="warning"><strong>UNCERTAINTY NOTICE</strong><br><br>Some connections cannot be verified confidently from this image. Treat the wire-path result as a lead for inspection, not a confirmed electrical fact.</div><h2>LEARNING NOTE</h2><p>Use this scan to practice tracing signal flow from source to ground. Confirm polarity, resistor placement, and continuity visually before powering the circuit.</p><div class="footer">POINT. SCAN. UNDERSTAND. CORRECT. / CIRCUITSIGHT AI</div></body></html>`;
+  const blob = new Blob([report], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "circuitsight-correction-report.html";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -103,7 +118,7 @@ export default function Home() {
         <div className="lab-heading"><h2>POINT.<br />SCAN.<br /><i>UNDERSTAND.</i></h2><div className="lab-side-note"><span className="mono">SCAN / 0007</span><p>Upload a circuit to see how the system turns visible hardware into a readable explanation.</p><button className="button button-outline" onClick={startScan}><ScanLine size={17} /> {scanState === "idle" ? "RUN DEMO SCAN" : scanState === "scanning" ? "ANALYZING..." : "SCAN COMPLETE"}</button></div></div>
         <div className="scanner-frame">
           <div className="scanner-image"><img src={scannerImage} alt="Circuit board prepared for scanning" /><div className={`scan-beam ${scanState !== "idle" ? "active" : ""}`} /><div className="scan-target target-a" /><div className="scan-target target-b" /><div className="scan-target target-c" /><div className="image-label mono">INPUT / BREADBOARD_07.JPG</div></div>
-          <aside className="analysis-panel"><div className="analysis-top"><span>ANALYSIS</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>OVERALL CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Some connections cannot be verified confidently from this image. Retake from top-down with labels visible.</p></div></div><button className="upload-row" onClick={startScan}><Upload size={17} /><span>UPLOAD REFERENCE CIRCUIT</span><ArrowUpRight size={16} /></button></aside>
+          <aside className="analysis-panel"><div className="analysis-top"><span>ANALYSIS</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>OVERALL CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Some connections cannot be verified confidently from this image. Retake from top-down with labels visible.</p></div></div><button className="upload-row" onClick={startScan}><Upload size={17} /><span>UPLOAD REFERENCE CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD CORRECTION REPORT" : "REPORT AVAILABLE AFTER ANALYSIS"}</span><span className="mono">HTML</span></button></aside>
         </div>
       </section>
 
