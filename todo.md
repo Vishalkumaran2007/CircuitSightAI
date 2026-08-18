@@ -42,3 +42,15 @@
 - [x] Remove the email OTP sign-up and login experience from CircuitSight.
 - [x] Remove Stytch and Supabase OTP endpoints, credentials references, and provider tests.
 - [x] Preserve the retained authentication method and protected workspace access.
+
+# Saved Analysis Discovery
+
+- [x] Add a search control for real saved circuit analyses.
+- [x] Add a date-based filter with an honest zero-results state.
+- [x] Verify responsive history discovery controls, tests, and production build.
+
+# Browser-Independent Validation
+
+- [x] Validate saved-analysis discovery using the accessible preview and real persisted history without browser sign-in.
+- [x] Extend automated coverage for search, recency filters, reset behavior, and zero-results messaging.
+- [x] Add reproducible component-level rendering tests for saved-analysis controls and zero-results messaging.

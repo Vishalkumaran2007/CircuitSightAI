@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { SavedAnalysisHistory } from "@/components/SavedAnalysisHistory";
 import { trpc } from "@/lib/trpc";
 import { ArrowUpRight, FileImage, Loader2, LogOut, Menu, Paperclip, Plus, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -89,7 +90,7 @@ export default function Workspace() {
         <div className="workspace-sidebar-head"><Link href="/dashboard" className="brand"><span className="workspace-mark">C</span><span>CIRCUITSIGHT <i>AI</i></span></Link><button className="workspace-close" onClick={() => setSidebarOpen(false)} aria-label="Close workspace menu"><X size={18} /></button></div>
         <button className="new-analysis" onClick={newAnalysis}><Plus size={16} /> NEW ANALYSIS <span className="mono">⌘ N</span></button>
         <div className="workspace-nav-label mono">YOUR ANALYSES</div>
-        <div className="thread-list">{isThreadsLoading ? <span className="thread-empty mono">LOADING YOUR HISTORY…</span> : threads.length ? threads.map(thread => <button key={thread.id} className={`thread ${thread.id === activeThreadId ? "active" : ""}`} onClick={() => openThread(thread.id)}><span className="thread-status" /> {thread.title}<small>{new Date(thread.updatedAt).toLocaleDateString()}</small></button>) : <span className="thread-empty mono">NO SAVED ANALYSES YET</span>}</div>
+        <SavedAnalysisHistory threads={threads} isLoading={isThreadsLoading} activeThreadId={activeThreadId} onOpenThread={openThread} />
         <div className="workspace-sample"><span className="mono">LEARNING SAMPLE / NOT SAVED</span><button type="button" onClick={openSampleDemo}>OPEN SAMPLE CIRCUIT <ArrowUpRight size={13} /></button></div>
         <div className="workspace-sidebar-foot"><div className="workspace-account"><div className="account-avatar">{(user.name || "U").charAt(0).toUpperCase()}</div><div><strong>{user.name || "LAB USER"}</strong><small>{user.email || "SIGNED-IN ACCOUNT"}</small></div></div><button className="workspace-logout" onClick={() => logout()} aria-label="Sign out"><LogOut size={15} /></button></div>
       </aside>
