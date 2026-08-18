@@ -65,6 +65,40 @@ describe("CircuitSight theme toggle", () => {
     renderer!.unmount();
   });
 
+  it("renders the home-only dropdown with four options and preserves workspace controls", () => {
+    let homeRenderer: TestRenderer.ReactTestRenderer;
+    act(() => {
+      homeRenderer = TestRenderer.create(
+        <ThemeProvider defaultTheme="dark" switchable>
+          <ThemeToggle homeDropdown />
+        </ThemeProvider>,
+      );
+    });
+    const homeTrigger = homeRenderer!.root.findByProps({ className: "theme-dropdown-trigger theme-toggle" });
+    expect(homeRenderer!.root.findAllByProps({ className: "theme-toggle-system" })).toHaveLength(0);
+    act(() => homeTrigger.props.onKeyDown({ key: "Enter", preventDefault: () => undefined }));
+    const homeOptions = homeRenderer!.root.findAll(node => node.props.role === "menuitemradio" || node.props.role === "menuitemcheckbox");
+    expect(homeOptions).toHaveLength(4);
+    expect(homeOptions.map(option => option.findByType("span").children.join(""))).toEqual(["LIGHT", "DARK", "SYSTEM", "HIGH CONTRAST"]);
+    const homeMenuButton = homeRenderer!.root.findByProps({ className: "theme-dropdown-trigger theme-toggle" });
+    act(() => homeMenuButton.props.onKeyDown({ key: " ", preventDefault: () => undefined }));
+    act(() => homeOptions[3].props.onClick());
+    expect(homeRenderer!.root.findAllByProps({ className: "theme-dropdown-option" })).toHaveLength(0);
+    homeRenderer!.unmount();
+
+    let workspaceRenderer: TestRenderer.ReactTestRenderer;
+    act(() => {
+      workspaceRenderer = TestRenderer.create(
+        <ThemeProvider defaultTheme="dark" switchable>
+          <ThemeToggle />
+        </ThemeProvider>,
+      );
+    });
+    expect(workspaceRenderer!.root.findAllByType("button")).toHaveLength(3);
+    expect(workspaceRenderer!.root.findAllByProps({ className: "theme-dropdown-trigger theme-toggle" })).toHaveLength(0);
+    workspaceRenderer!.unmount();
+  });
+
   it("keeps the palette and responsive toggle contract in the stylesheet", () => {
     const css = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
     expect(css).toContain(":root.light-theme");
@@ -94,6 +128,16 @@ describe("CircuitSight theme toggle", () => {
     }
     expect(css).toContain("--acid-rgb: 196,181,253");
     expect(css).toContain(".theme-controls");
+    expect(css).toContain(".theme-dropdown");
+    expect(css).toContain(".theme-dropdown-option");
+    const toggleSource = readFileSync(resolve(process.cwd(), "client/src/components/ThemeToggle.tsx"), "utf8");
+    expect(toggleSource).toContain("LIGHT");
+    expect(toggleSource).toContain("DARK");
+    expect(toggleSource).toContain("SYSTEM");
+    expect(toggleSource).toContain("HIGH CONTRAST");
+    expect(toggleSource).toContain('event.key === "Escape"');
+    const appSource = readFileSync(resolve(process.cwd(), "client/src/App.tsx"), "utf8");
+    expect(appSource).toContain('homeDropdown={location === "/"}');
     expect(css).toContain(".theme-toggle");
     expect(css).toContain(".high-contrast");
     expect(css).toContain("color: var(--text-inverse)");

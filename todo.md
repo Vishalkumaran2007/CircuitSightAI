@@ -228,3 +228,20 @@
 
 - [x] Make the account avatar initial clearly visible in dark and light themes with a guaranteed contrast-safe color pair.
 - [x] Verify the avatar at desktop/mobile workspace sizes, tests, and production build.
+
+# Home Appearance Dropdown
+
+- [x] Replace the home-page DARK/SYSTEM/A11Y stack with one icon-triggered dropdown.
+- [x] Provide exactly LIGHT, DARK, SYSTEM, and HIGH CONTRAST options in the home dropdown while preserving keyboard access and leaving workspace controls unchanged.
+- [x] Verify home-only behavior, responsive presentation, tests, and production build.
+
+# Home Dropdown Evidence Follow-up
+
+- [x] Add rendered interaction coverage proving the home route shows one icon trigger and exactly four opened menu options.
+- [x] Verify Enter/Space/Escape keyboard behavior for the home dropdown and confirm workspace retains the full controls.
+- [x] Capture opened home-dropdown screenshots at desktop and mobile breakpoints.
+
+# Home Dropdown App-Shell Evidence
+
+- [x] Add rendered app-shell coverage proving the home route uses one icon trigger and workspace retains the full controls.
+- [x] Exercise Escape closing the opened home dropdown through the document keyboard listener.
