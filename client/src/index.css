@@ -531,3 +531,8 @@
 .visual-signal-preview-surface b { font: 700 8px/1 "Monaspace Krypton"; letter-spacing: .06em; }
 @media (max-width: 760px) { .visual-signal-preview-header { display: grid; align-items: start; } .visual-signal-preview-toggle { justify-self: start; } .visual-signal-preview-grid { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .visual-signal-preview-pane, .visual-signal-preview-surface { transition: none; } }
+
+/* Explicit contrast guard for compact preview and report surfaces */
+.visual-signal-preview-pane .mono, .visual-signal-preview-pane strong, .visual-signal-preview-pane small, .visual-signal-preview-pane b { color: inherit; opacity: 1; }
+.report-actions button span { color: var(--foreground); }
+.report-actions button small, .report-actions p { color: var(--text-soft); }

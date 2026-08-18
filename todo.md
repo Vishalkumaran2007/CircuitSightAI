@@ -335,3 +335,8 @@
 - [x] Hide the correction-report download action by default in Workspace.
 - [x] Reveal the export action only after the user explicitly requests a report download.
 - [x] Add regression coverage while preserving completed analysis and report generation behavior.
+
+# Theme Preview Text Contrast
+
+- [x] Make all side-by-side light/dark preview labels and status text clearly readable against their preview surfaces.
+- [x] Add regression coverage and verify the preview contrast in both modes.

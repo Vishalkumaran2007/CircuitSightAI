@@ -59,6 +59,8 @@ describe("IDK refinement contracts", () => {
     expect(page).toContain("active signal pair side by side");
     expect(css).toContain(".visual-signal-preview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));");
     expect(css).toContain("@media (max-width: 760px) { .visual-signal-preview-header");
+    expect(css).toContain(".visual-signal-preview-pane .mono, .visual-signal-preview-pane strong, .visual-signal-preview-pane small, .visual-signal-preview-pane b { color: inherit; opacity: 1; }");
+    expect(css).toContain(".report-actions button small, .report-actions p { color: var(--text-soft); }");
     expect(css).toContain("/* Readability audit: keep supporting text dense enough across every paired theme */");
     for (const token of ["--background", "--surface-1", "--foreground", "--text-soft", "--muted", "--border", "--acid"]) {
       expect(css).toContain(token);
