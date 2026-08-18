@@ -1,7 +1,6 @@
-# Live Multimodal Circuit Analysis
+# Session-aware Workspace Entry
 
-- [x] Add a protected server procedure that sends text and image content to the built-in multimodal LLM helper.
-- [x] Define a structured, uncertainty-aware circuit analysis response contract.
-- [x] Wire workspace text and image submissions to the live procedure.
-- [x] Render live assistant responses and analysis errors in the workspace.
-- [x] Add tests and verify typecheck, build, and workspace behavior.
+- [x] Inspect current home actions and authentication state usage.
+- [x] Route authenticated home actions to the workspace and unauthenticated actions to auth.
+- [x] Make the primary home scan CTA use the corrected entry behavior.
+- [x] Verify routing, typecheck, build, and responsive home behavior.

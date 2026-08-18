@@ -1,5 +1,7 @@
 /* Kinetic Circuit Brutalism: asymmetric editorial layout, acid signal actions, hard borders, candid confidence states. */
 import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useLocation } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, Check, ChevronRight, Download, Menu, ScanLine, Upload, X, Zap } from "lucide-react";
 
@@ -37,9 +39,16 @@ function downloadCorrectionReport() {
 }
 
 export default function Home() {
+  const { user, loading: authLoading } = useAuth();
+  const [, setLocation] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scanState, setScanState] = useState<"idle" | "scanning" | "complete">("idle");
   const reduceMotion = useReducedMotion();
+
+  const openWorkspace = () => {
+    if (authLoading) return;
+    setLocation(user ? "/workspace" : "/auth");
+  };
 
   const startScan = () => {
     setScanState("scanning");
@@ -66,12 +75,12 @@ export default function Home() {
           <button onClick={() => scrollTo("learning")}>LEARNING</button>
           <div className="mobile-nav-actions">
             <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
-            <button className="button button-acid" onClick={() => scrollTo("lab")}>START SCANNING <ArrowUpRight size={16} /></button>
+            <button className="button button-acid" onClick={openWorkspace} aria-disabled={authLoading}>START SCANNING <ArrowUpRight size={16} /></button>
           </div>
         </nav>
         <div className="nav-actions">
           <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
-          <button className="button button-acid nav-cta" onClick={() => scrollTo("lab")}>START SCANNING <ArrowUpRight size={16} /></button>
+          <button className="button button-acid nav-cta" onClick={openWorkspace} aria-disabled={authLoading}>START SCANNING <ArrowUpRight size={16} /></button>
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button>
         </div>
       </header>
@@ -84,7 +93,7 @@ export default function Home() {
           <h1 id="hero-title">YOUR<br /><em>CIRCUIT</em><br />IS TALKING.</h1>
           <p className="hero-lede">Photograph your physical circuit. CircuitSight AI identifies components, traces visible connections, detects likely mistakes, explains the problem, and guides you toward the correct circuit.</p>
           <div className="hero-actions">
-            <button className="button button-acid button-large" onClick={() => scrollTo("lab")}>SCAN A CIRCUIT <ArrowUpRight size={19} /></button>
+            <button className="button button-acid button-large" onClick={openWorkspace} aria-disabled={authLoading}>SCAN A CIRCUIT <ArrowUpRight size={19} /></button>
             <button className="text-link" onClick={() => scrollTo("how-it-works")}>SEE HOW IT WORKS <ArrowDownRight size={18} /></button>
           </div>
         </div>
