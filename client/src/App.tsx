@@ -20,11 +20,12 @@ import Help from "./pages/Help";
 import SwitchAccount from "./pages/SwitchAccount";
 import VisualSignal from "./pages/VisualSignal";
 
+const APPEARANCE_ROUTES = new Set(["/", "/visual-signal"]);
+
 export function AppearanceLayer() {
   const [location] = useLocation();
-  if (location === "/") return <ThemeToggle homeDropdown={location === "/"} />;
-  if (location === "/visual-signal") return <ThemeToggle />;
-  return null;
+  if (!APPEARANCE_ROUTES.has(location)) return null;
+  return <ThemeToggle homeDropdown={location === "/"} />;
 }
 
 function Router() {

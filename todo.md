@@ -301,3 +301,8 @@
 
 - [x] Make loading transition heading, status text, and progress treatment readable in light mode.
 - [x] Add regression coverage and verify the loading transition in light and dark themes.
+
+# Route-Scoped Appearance Controls
+
+- [x] Ensure DARK / SYSTEM / A11Y controls render only on Home and Visual Signal routes and remain absent elsewhere.
+- [x] Add regression coverage for allowed and disallowed routes without changing control functionality.

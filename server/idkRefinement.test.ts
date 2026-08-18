@@ -51,9 +51,9 @@ describe("IDK refinement contracts", () => {
 
   it("limits appearance controls to Home and Visual Signal", () => {
     const app = read("client/src/App.tsx");
-    expect(app).toContain('if (location === "/") return <ThemeToggle homeDropdown={location === "/"} />;');
-    expect(app).toContain('if (location === "/visual-signal") return <ThemeToggle />;');
-    expect(app).toContain("return null;");
+    expect(app).toContain('const APPEARANCE_ROUTES = new Set(["/", "/visual-signal"]);');
+    expect(app).toContain("if (!APPEARANCE_ROUTES.has(location)) return null;");
+    expect(app).toContain('return <ThemeToggle homeDropdown={location === "/"} />;');
   });
 
   it("keeps Help and Visual Signal responsive contracts explicit", () => {
