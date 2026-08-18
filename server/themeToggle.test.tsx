@@ -79,6 +79,8 @@ describe("CircuitSight theme toggle", () => {
     expect(css).toContain(".light-theme .new-analysis");
     expect(css).toContain(".light-theme .composer-send");
     expect(css).toContain(".light-theme .workspace-mark");
+    expect(css).toContain(".account-avatar { width: 26px");
+    expect(css).toContain(".light-theme .account-avatar { background: #000000; color: #FFFFFF; }");
     expect(css).toContain(".dark .workspace-sidebar, .dark .workspace-topbar");
     expect(css).toContain(".dark .workspace-nav-label");
     expect(css).toContain(".light-theme .workspace-sidebar, .light-theme .workspace-topbar");

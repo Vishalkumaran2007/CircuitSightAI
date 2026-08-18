@@ -223,3 +223,8 @@
 - [x] Add explicit dark/light contrast rules for workspace sidebar, top bar, saved-analysis entries, and supporting labels.
 - [x] Add selector-level regression assertions for the affected workspace surfaces.
 - [x] Capture workspace screenshots for both dark and light themes at desktop and mobile breakpoints.
+
+# Workspace Avatar Contrast
+
+- [x] Make the account avatar initial clearly visible in dark and light themes with a guaranteed contrast-safe color pair.
+- [x] Verify the avatar at desktop/mobile workspace sizes, tests, and production build.
