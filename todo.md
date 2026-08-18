@@ -323,3 +323,15 @@
 - [x] Audit route-level text tokens across all paired light and dark Visual Signal themes.
 - [x] Strengthen low-density font colors and muted labels where needed without changing core behavior.
 - [x] Add regression coverage and verify representative routes and theme variants visually.
+
+# Theme Preview and Reusable Skill
+
+- [x] Add a side-by-side light/dark theme preview mode to Visual Signal without changing the active global theme.
+- [x] Package the paired-theme implementation and readability-audit workflow as a reusable skill.
+- [x] Validate the preview UI, skill package, existing workflows, tests, and production build.
+
+# Explicit Export Request
+
+- [x] Hide the correction-report download action by default in Workspace.
+- [x] Reveal the export action only after the user explicitly requests a report download.
+- [x] Add regression coverage while preserving completed analysis and report generation behavior.

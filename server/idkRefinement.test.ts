@@ -54,10 +54,23 @@ describe("IDK refinement contracts", () => {
     expect(page).toContain("BACK TO SETTINGS");
     expect(css).toContain(".palette-grid { grid-template-columns: repeat(4, minmax(0, 1fr));");
     expect(css).toContain("@media (max-width: 760px) { .palette-grid { grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(page).toContain("COMPARE LIGHT / DARK.");
+    expect(page).toContain("HIDE COMPARISON");
+    expect(page).toContain("active signal pair side by side");
+    expect(css).toContain(".visual-signal-preview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(css).toContain("@media (max-width: 760px) { .visual-signal-preview-header");
     expect(css).toContain("/* Readability audit: keep supporting text dense enough across every paired theme */");
     for (const token of ["--background", "--surface-1", "--foreground", "--text-soft", "--muted", "--border", "--acid"]) {
       expect(css).toContain(token);
     }
+  });
+
+  it("shows report download only after an explicit export request", () => {
+    const workspace = read("client/src/pages/Workspace.tsx");
+    expect(workspace).toContain("const exportRequestPattern");
+    expect(workspace).toContain("const [reportRequested, setReportRequested] = useState(false);");
+    expect(workspace).toContain("wantsExport && completedReport");
+    expect(workspace).toContain("{!isDemo && reportRequested && <CircuitPdfReportAction report={completedReport} />}");
   });
 
   it("limits appearance controls to Home and Visual Signal", () => {

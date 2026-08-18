@@ -514,3 +514,20 @@
 .route-transition-content p, .route-transition-footer { color: var(--text-soft); }
 .dark .account-topnav a, .dark .account-menu-identity small, .dark .account-hero p, .dark .preference-panel p, .dark .settings-card p, .dark .help-card p, .dark .profile-note p, .dark .switch-account-card p, .dark .preference-checks small, .dark .profile-identity p, .dark .profile-data-row small, .dark .settings-card-head span, .dark .switch-account-current small, .dark .visual-signal-heading .mono, .dark .visual-signal-card p, .dark .palette-choice-copy small, .dark .palette-choice-copy em, .dark .team-intro, .dark .team-responsibility, .dark .team-footer-credit, .dark .route-transition-content p, .dark .route-transition-footer { color: var(--text-soft); }
 .light-theme .account-topnav a, .light-theme .account-menu-identity small, .light-theme .account-hero p, .light-theme .preference-panel p, .light-theme .settings-card p, .light-theme .help-card p, .light-theme .profile-note p, .light-theme .switch-account-card p, .light-theme .preference-checks small, .light-theme .profile-identity p, .light-theme .profile-data-row small, .light-theme .settings-card-head span, .light-theme .switch-account-current small, .light-theme .visual-signal-heading .mono, .light-theme .visual-signal-card p, .light-theme .palette-choice-copy small, .light-theme .palette-choice-copy em, .light-theme .team-intro, .light-theme .team-responsibility, .light-theme .team-footer-credit, .light-theme .route-transition-content p, .light-theme .route-transition-footer { color: var(--text-soft); }
+
+/* Side-by-side Visual Signal preview */
+.visual-signal-preview-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
+.visual-signal-preview-header h2 { margin-bottom: 8px; }
+.visual-signal-preview-header p { max-width: 580px; }
+.visual-signal-preview-toggle { flex: 0 0 auto; }
+.visual-signal-preview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.visual-signal-preview-pane { display: grid; gap: 10px; min-height: 190px; padding: 16px; border: 2px solid; }
+.visual-signal-preview-pane .mono { font-size: 8px; letter-spacing: .08em; opacity: .8; }
+.visual-signal-preview-pane strong { display: block; font: 800 clamp(22px, 3vw, 36px)/.9 "Space Grotesk"; letter-spacing: -.06em; }
+.visual-signal-preview-pane small { font: 700 10px/1.2 "Monaspace Krypton"; }
+.visual-signal-preview-surface { display: grid; grid-template-columns: 16px 1fr; grid-template-rows: 1fr auto; gap: 8px; align-items: center; margin-top: auto; padding: 10px; border: 2px solid; }
+.visual-signal-preview-surface span { width: 16px; height: 16px; grid-row: span 2; }
+.visual-signal-preview-surface i { display: block; width: 100%; height: 2px; }
+.visual-signal-preview-surface b { font: 700 8px/1 "Monaspace Krypton"; letter-spacing: .06em; }
+@media (max-width: 760px) { .visual-signal-preview-header { display: grid; align-items: start; } .visual-signal-preview-toggle { justify-self: start; } .visual-signal-preview-grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .visual-signal-preview-pane, .visual-signal-preview-surface { transition: none; } }

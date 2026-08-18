@@ -19,6 +19,8 @@ const messageQaMessages: WorkspaceMessage[] = [
   { id: "qa-user", role: "user", content: "Analyze this circuit image.", attachmentName: "qa-circuit.jpg" },
   { id: "qa-assistant", role: "assistant", content: "Got it — I’ve checked the circuit.\n\nThe visible path appears to include a battery, a switch, and a lamp in series. I can see the loop in the image, but continuity at the return rail is not fully confirmed.\n\nI’m reasonably confident about the component layout (~82%), but I cannot measure live current from a photograph. Would you like me to trace the current path step-by-step?" },
 ];
+const exportRequestPattern = /\b(download|export|pdf)\b|(?:correction|analysis)\s+report|generate\s+(?:a\s+)?report/i;
+
 const sampleCircuitMessages: WorkspaceMessage[] = [
   { id: "sample-user", role: "user", content: "Sample circuit: Why does the LED stay off on this breadboard?", attachmentName: "sample-breadboard.jpg" },
   { id: "sample-assistant", role: "assistant", content: "SAMPLE CIRCUIT DEMO — NOT SAVED TO YOUR HISTORY\n\nI’ve checked the sample. This looks like a simple LED circuit, and the likely trouble spots are reversed polarity, a missing current-limiting resistor, or a ground rail that is not bridged across the board. Electricity is fussy about closed loops — unfortunately, it does not accept good intentions as continuity.\n\nI’m reasonably confident about those visual clues, but this is only a teaching sample. I cannot measure actual current or continuity from the image.\n\nIf you test it physically, I’d confirm the LED’s longer lead faces the positive side, trace the ground rail with power disconnected, and make sure a resistor is in series before energizing anything. Want me to trace the current path step-by-step?" },
@@ -33,6 +35,7 @@ export default function Workspace() {
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
   const [completedReport, setCompletedReport] = useState<{ analysis: CircuitReportAnalysis; imageDataUrl: string | null; imageMimeType: string | null; title: string } | null>(null);
+  const [reportRequested, setReportRequested] = useState(false);
   const [messageQaState] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("qa") === "message");
   const [messages, setMessages] = useState<WorkspaceMessage[]>(() => messageQaState ? messageQaMessages : []);
   const [activeThreadId, setActiveThreadId] = useState<number | null>(null);
@@ -66,15 +69,15 @@ export default function Workspace() {
   }, [threadQuery.data]);
 
   const newAnalysis = () => {
-    setMessages([]); setFile(null); setDraft(""); setActiveThreadId(null); setIsDemo(false); setPreviewImage(null); setSidebarOpen(false);
+    setMessages([]); setFile(null); setDraft(""); setActiveThreadId(null); setIsDemo(false); setPreviewImage(null); setReportRequested(false); setSidebarOpen(false);
   };
 
   const openThread = (threadId: number) => {
-    setActiveThreadId(threadId); setIsDemo(false); setCompletedReport(null); setSidebarOpen(false);
+    setActiveThreadId(threadId); setIsDemo(false); setCompletedReport(null); setReportRequested(false); setSidebarOpen(false);
   };
 
   const openSampleDemo = () => {
-    setMessages(sampleCircuitMessages); setActiveThreadId(null); setIsDemo(true); setCompletedReport(null); setSidebarOpen(false);
+    setMessages(sampleCircuitMessages); setActiveThreadId(null); setIsDemo(true); setCompletedReport(null); setReportRequested(false); setSidebarOpen(false);
   };
 
   const submitFeedback = (message: WorkspaceMessage) => {
@@ -86,6 +89,12 @@ export default function Workspace() {
 
   const submitQuestion = async (prompt = draft) => {
     const trimmed = prompt.trim();
+    const wantsExport = exportRequestPattern.test(trimmed);
+    if (wantsExport && completedReport && !file) {
+      setReportRequested(true);
+      setDraft("");
+      return;
+    }
     if ((!trimmed && !file) || analyzeMutation.isPending) return;
     const selectedFile = file;
     const attachmentName = selectedFile?.name;
@@ -107,6 +116,7 @@ export default function Workspace() {
       }
       const result = await analyzeMutation.mutateAsync({ threadId: activeThreadId ?? undefined, question: trimmed || undefined, imageDataUrl, imageMimeType: selectedFile?.type, attachmentName });
       setActiveThreadId(result.thread.id);
+      setReportRequested(wantsExport);
       setCompletedReport({ analysis: result.analysis, imageDataUrl: imageDataUrl ?? null, imageMimeType: selectedFile?.type ?? null, title: result.thread.title });
       setMessages(current => [...current.filter(message => message.id !== temporaryId), { id: `user-${Date.now()}`, role: "user", content: userContent, attachmentName }, { id: `assistant-${Date.now()}`, role: "assistant", content: result.displayContent }]);
       await refetchThreads();
@@ -132,7 +142,7 @@ export default function Workspace() {
       <div className="workspace-main">
         <header className="workspace-topbar"><button className="workspace-menu" onClick={() => setSidebarOpen(true)} aria-label="Open workspace menu"><Menu size={19} /></button><div><span className="mono">IDK / ANALYSIS</span><strong>{isDemo ? "SAMPLE CIRCUIT DEMO" : (activeThreadId || messageQaState) ? "SAVED CIRCUIT THREAD" : "NEW CIRCUIT THREAD"}</strong></div><div className="workspace-top-status"><span className="live-dot" /> VISION READY</div></header>
         <section className={`workspace-conversation ${messages.length === 0 ? "empty" : ""}`}>
-          {messages.length === 0 ? <div className="workspace-empty"><div className="workspace-empty-mark"><Sparkles size={28} /></div><span className="mono">INPUT FIELD / 01</span><h1>WHAT ARE YOU<br /><em>BUILDING?</em></h1><p>Ask a circuit question or upload a clear circuit photo. Your signed-in account keeps only the analyses you submit.</p><div className="suggestion-grid">{suggestions.map(suggestion => <button key={suggestion} onClick={() => submitQuestion(suggestion)}>{suggestion}<ArrowUpRight size={14} /></button>)}</div><button className="sample-demo-launch" onClick={openSampleDemo}>VIEW SAMPLE CIRCUIT DEMO <ArrowUpRight size={14} /></button></div> : <div className="message-stream">{isDemo && <div className="sample-demo-banner mono">SAMPLE CIRCUIT DEMO / NOT SAVED TO YOUR ACCOUNT</div>}{messages.map(message => <div key={message.id} className={`workspace-message ${message.role}`}><div className="message-meta mono">{message.role === "user" ? "YOU / INPUT" : "IDK / DIAGNOSTIC KERNEL"}</div><div className="message-content">{message.content.split("\n").map((line, index) => <p key={index}>{line || <>&nbsp;</>}</p>)}{message.attachmentName && <div className="message-attachment"><FileImage size={16} /><span>{message.attachmentName}</span><small>{isDemo ? "SAMPLE IMAGE" : "YOUR IMAGE"}</small>{isDemo && <ImagePreviewButton className="message-preview-button" label="PREVIEW" onClick={() => setPreviewImage({ src: sampleCircuitImage, alt: "Sample breadboard circuit" })} />}</div>}{message.role === "assistant" && !isDemo && activeThreadId && <button type="button" className="message-feedback" onClick={() => submitFeedback(message)} disabled={feedbackMutation.isPending || feedbackSent.includes(typeof message.id === "number" ? message.id : -1)}>{feedbackSent.includes(typeof message.id === "number" ? message.id : -1) ? "FEEDBACK QUEUED FOR REVIEW" : <><ThumbsUp size={13} /> CORRECT OR CONFIRM THIS RESPONSE</>}</button>}</div></div>)}{analyzeMutation.isPending && <div className="workspace-message assistant analyzing"><div className="message-meta mono">IDK / DIAGNOSTIC KERNEL</div><div className="analyzing-line"><span className="analyzing-pulse" /><span>READING COMPONENTS AND VISIBLE CONNECTIONS</span><Loader2 className="spin" size={15} /></div></div>}{!isDemo && <CircuitPdfReportAction report={completedReport} />}</div>}
+          {messages.length === 0 ? <div className="workspace-empty"><div className="workspace-empty-mark"><Sparkles size={28} /></div><span className="mono">INPUT FIELD / 01</span><h1>WHAT ARE YOU<br /><em>BUILDING?</em></h1><p>Ask a circuit question or upload a clear circuit photo. Your signed-in account keeps only the analyses you submit.</p><div className="suggestion-grid">{suggestions.map(suggestion => <button key={suggestion} onClick={() => submitQuestion(suggestion)}>{suggestion}<ArrowUpRight size={14} /></button>)}</div><button className="sample-demo-launch" onClick={openSampleDemo}>VIEW SAMPLE CIRCUIT DEMO <ArrowUpRight size={14} /></button></div> : <div className="message-stream">{isDemo && <div className="sample-demo-banner mono">SAMPLE CIRCUIT DEMO / NOT SAVED TO YOUR ACCOUNT</div>}{messages.map(message => <div key={message.id} className={`workspace-message ${message.role}`}><div className="message-meta mono">{message.role === "user" ? "YOU / INPUT" : "IDK / DIAGNOSTIC KERNEL"}</div><div className="message-content">{message.content.split("\n").map((line, index) => <p key={index}>{line || <>&nbsp;</>}</p>)}{message.attachmentName && <div className="message-attachment"><FileImage size={16} /><span>{message.attachmentName}</span><small>{isDemo ? "SAMPLE IMAGE" : "YOUR IMAGE"}</small>{isDemo && <ImagePreviewButton className="message-preview-button" label="PREVIEW" onClick={() => setPreviewImage({ src: sampleCircuitImage, alt: "Sample breadboard circuit" })} />}</div>}{message.role === "assistant" && !isDemo && activeThreadId && <button type="button" className="message-feedback" onClick={() => submitFeedback(message)} disabled={feedbackMutation.isPending || feedbackSent.includes(typeof message.id === "number" ? message.id : -1)}>{feedbackSent.includes(typeof message.id === "number" ? message.id : -1) ? "FEEDBACK QUEUED FOR REVIEW" : <><ThumbsUp size={13} /> CORRECT OR CONFIRM THIS RESPONSE</>}</button>}</div></div>)}{analyzeMutation.isPending && <div className="workspace-message assistant analyzing"><div className="message-meta mono">IDK / DIAGNOSTIC KERNEL</div><div className="analyzing-line"><span className="analyzing-pulse" /><span>READING COMPONENTS AND VISIBLE CONNECTIONS</span><Loader2 className="spin" size={15} /></div></div>}{!isDemo && reportRequested && <CircuitPdfReportAction report={completedReport} />}</div>}
         </section>
         <section className="workspace-composer-wrap"><div className="workspace-confidence mono">ANALYSIS IS PROBABILISTIC / CONFIDENCE WILL BE SHOWN WITH EVERY FINDING</div><form className="workspace-composer" onSubmit={event => { event.preventDefault(); submitQuestion(); }}><div className="composer-tools"><button type="button" onClick={() => fileInputRef.current?.click()} aria-label="Upload circuit image"><Paperclip size={18} /></button><input ref={fileInputRef} type="file" accept="image/*" onChange={event => setFile(event.target.files?.[0] || null)} /></div><textarea value={draft} onChange={event => setDraft(event.target.value)} placeholder="Describe a circuit or ask a doubt..." aria-label="Describe your circuit or ask a doubt" rows={1} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submitQuestion(); } }} /><button className="composer-send" type="submit" disabled={analyzeMutation.isPending || (!draft.trim() && !file)} aria-label="Send circuit question"><Send size={18} /></button></form>{file && <div className="composer-file"><FileImage size={15} /><span>{file.name}</span>{filePreviewUrl && <ImagePreviewButton className="composer-preview-button" label="PREVIEW" onClick={() => setPreviewImage({ src: filePreviewUrl, alt: file.name })} />}<button type="button" onClick={() => setFile(null)} aria-label="Remove attachment"><X size={14} /></button></div>}<div className="workspace-composer-note">CIRCUITSIGHT CAN MAKE MISTAKES. VERIFY POWER, POLARITY, AND CONTINUITY BEFORE ENERGIZING A CIRCUIT.</div></section>
         <ImagePreviewDialog src={previewImage?.src ?? null} alt={previewImage?.alt ?? "Circuit image"} open={Boolean(previewImage)} onClose={() => setPreviewImage(null)} />
