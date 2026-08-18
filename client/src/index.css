@@ -80,3 +80,13 @@
 @keyframes route-gate-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes route-meter { from { width: 8%; } to { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .route-transition, .route-transition-meter i { animation-duration: 1ms; animation-iteration-count: 1; } }
+
+/* Keep the mobile composer prompt compact and single-line without restricting typed messages. */
+@media (max-width: 760px) {
+  .workspace-composer textarea::placeholder {
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: -.02em;
+    white-space: nowrap;
+  }
+}
