@@ -291,3 +291,8 @@
 - [x] Add a native TEAM / CREDITS section to the Home page with the four exact member names, role labels, and responsibilities.
 - [x] Add responsive brutalist card styling, hard color-inversion hover states, performant entrance motion, and reduced-motion support.
 - [x] Add regression coverage and verify the Home section without changing existing core workflows.
+
+# Dashboard Light Theme Number Contrast
+
+- [x] Make dashboard numeric readouts and large decorative numbers explicitly readable in light mode.
+- [x] Add regression coverage and verify the fix in light and dark themes.

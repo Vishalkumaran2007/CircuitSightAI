@@ -5,6 +5,13 @@ import { describe, expect, it } from "vitest";
 const read = (path: string) => readFileSync(resolve(process.cwd(), path), "utf8");
 
 describe("IDK refinement contracts", () => {
+  it("keeps dashboard numbers visible in the light theme", () => {
+    const css = read("client/src/index.css");
+    expect(css).toContain(".light-theme .dashboard-hero:after { color: #000000; }");
+    expect(css).toContain(".light-theme .dashboard-card strong { color: #000000; }");
+    expect(css).toContain(".light-theme .dashboard-card > span { color: #333333; }");
+  });
+
   it("preserves the exact TEAM / CREDITS responsibilities", () => {
     const home = read("client/src/pages/Home.tsx");
     const css = read("client/src/index.css");

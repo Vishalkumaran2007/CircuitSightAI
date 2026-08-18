@@ -399,3 +399,10 @@
 @media (max-width: 980px) { .team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .team-card h3 { margin-top: 58px; } }
 @media (max-width: 760px) { .team-heading { display: grid; gap: 28px; padding: 68px 20px 44px; } .team-heading h2 { font-size: clamp(4rem, 20vw, 7rem); } .team-intro { max-width: 360px; } .team-grid { grid-template-columns: 1fr; margin: 0 20px; } .team-card { min-height: 285px; padding: 18px; } .team-card h3 { margin-top: 52px; } .team-footer-credit { margin: 28px 20px 0; line-height: 1.45; } }
 @media (prefers-reduced-motion: reduce) { .team-card { transition: background-color .01ms, color .01ms; } .team-card:hover, .team-card:focus-within { transform: none; } .team-card:hover .team-mark, .team-card:focus-within .team-mark { transform: none; } }
+
+/* Dashboard light-theme numeric contrast */
+.light-theme .dashboard-hero:after { color: #000000; }
+.light-theme .dashboard-card strong { color: #000000; }
+.light-theme .dashboard-card > span { color: #333333; }
+.light-theme .dashboard-card h3 { color: #000000; }
+.light-theme .dashboard-card p { color: #333333; }
