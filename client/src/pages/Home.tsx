@@ -65,12 +65,12 @@ export default function Home() {
           <button onClick={() => scrollTo("lab")}>LAB</button>
           <button onClick={() => scrollTo("learning")}>LEARNING</button>
           <div className="mobile-nav-actions">
-            <button className="nav-quiet" onClick={() => alert("Sign in is coming soon.")}>SIGN IN</button>
+            <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
             <button className="button button-acid" onClick={() => scrollTo("lab")}>START SCANNING <ArrowUpRight size={16} /></button>
           </div>
         </nav>
         <div className="nav-actions">
-          <button className="nav-quiet" onClick={() => alert("Sign in is coming soon.")}>SIGN IN</button>
+          <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
           <button className="button button-acid nav-cta" onClick={() => scrollTo("lab")}>START SCANNING <ArrowUpRight size={16} /></button>
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button>
         </div>
