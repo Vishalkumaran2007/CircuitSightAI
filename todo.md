@@ -312,3 +312,8 @@
 - [x] Review the attached specification and map each requirement to the current CircuitSight AI implementation.
 - [x] Apply compatible specification requirements without changing protected core workflows, authentication, or existing visual identity.
 - [x] Add regression coverage and validate the specification update before publishing.
+
+# Paired Visual Signal Theme References
+
+- [x] Replace the current Visual Signal theme definitions with the approved light and dark reference combinations.
+- [x] Apply paired background, surface, text, and accent tokens with persistence, accessibility, and responsive verification.
