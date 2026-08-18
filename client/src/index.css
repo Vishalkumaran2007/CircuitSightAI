@@ -371,3 +371,31 @@
 .message-feedback { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; border: 1px solid var(--border-strong); background: transparent; color: var(--muted); padding: 7px 9px; cursor: pointer; font: 700 9px/1 "Monaspace Krypton"; }
 .message-feedback:hover, .message-feedback:focus-visible { border-color: var(--acid); color: var(--acid); outline: none; }
 .message-feedback:disabled { cursor: default; opacity: .75; }
+
+/* TEAM / CREDITS — native Kinetic Typography section */
+.team-credits { padding-bottom: 104px; }
+.team-heading { display: flex; align-items: end; justify-content: space-between; gap: 44px; padding: 86px 7vw 64px; }
+.team-heading h2 { font-size: clamp(4rem, 9vw, 9rem); }
+.team-intro { max-width: 310px; color: var(--muted); font-size: 1rem; line-height: 1.4; margin: 0 0 8px; }
+.team-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 4vw; border-top: 2px solid var(--border); border-left: 2px solid var(--border); }
+.team-card { min-height: 340px; display: flex; flex-direction: column; padding: 22px 20px 24px; border-right: 2px solid var(--border); border-bottom: 2px solid var(--border); background: var(--surface-1); color: var(--foreground); transition: background-color .2s var(--ease-out), color .2s var(--ease-out), transform .2s var(--ease-out); }
+.team-card:hover, .team-card:focus-within { background: var(--acid); color: #000; transform: translateY(-6px); }
+.team-card-top { display: flex; justify-content: space-between; align-items: center; }
+.team-number { color: var(--acid); font-size: 12px; transition: color .2s var(--ease-out); }
+.team-mark { color: var(--acid); font: 400 28px/.7 "Space Grotesk"; transition: color .2s var(--ease-out), transform .2s var(--ease-out); }
+.team-card:hover .team-number, .team-card:hover .team-mark, .team-card:focus-within .team-number, .team-card:focus-within .team-mark { color: #000; }
+.team-card:hover .team-mark, .team-card:focus-within .team-mark { transform: rotate(45deg); }
+.team-card h3 { margin: 78px 0 10px; font: 800 clamp(1.15rem, 1.8vw, 1.75rem)/.9 "Space Grotesk"; letter-spacing: -.06em; }
+.team-role { margin: 0; font-size: 10px; letter-spacing: .08em; color: var(--acid); }
+.team-card:hover .team-role, .team-card:focus-within .team-role { color: #000; }
+.team-rule { height: 2px; width: 100%; margin: 18px 0 16px; background: var(--acid); }
+.team-card:hover .team-rule, .team-card:focus-within .team-rule { background: #000; }
+.team-responsibility { margin: auto 0 0; color: var(--muted); font-size: 13px; line-height: 1.42; }
+.team-card:hover .team-responsibility, .team-card:focus-within .team-responsibility { color: #000; }
+.team-card-2 { background: color-mix(in srgb, var(--surface-1) 86%, var(--acid)); }
+.team-card-3 { background: color-mix(in srgb, var(--surface-1) 92%, var(--acid)); }
+.team-card-4 { background: color-mix(in srgb, var(--surface-1) 80%, var(--acid)); }
+.team-footer-credit { margin: 34px 4vw 0; color: var(--muted); font-size: 10px; letter-spacing: .08em; }
+@media (max-width: 980px) { .team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .team-card h3 { margin-top: 58px; } }
+@media (max-width: 760px) { .team-heading { display: grid; gap: 28px; padding: 68px 20px 44px; } .team-heading h2 { font-size: clamp(4rem, 20vw, 7rem); } .team-intro { max-width: 360px; } .team-grid { grid-template-columns: 1fr; margin: 0 20px; } .team-card { min-height: 285px; padding: 18px; } .team-card h3 { margin-top: 52px; } .team-footer-credit { margin: 28px 20px 0; line-height: 1.45; } }
+@media (prefers-reduced-motion: reduce) { .team-card { transition: background-color .01ms, color .01ms; } .team-card:hover, .team-card:focus-within { transform: none; } .team-card:hover .team-mark, .team-card:focus-within .team-mark { transform: none; } }

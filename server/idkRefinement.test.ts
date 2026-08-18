@@ -5,6 +5,17 @@ import { describe, expect, it } from "vitest";
 const read = (path: string) => readFileSync(resolve(process.cwd(), path), "utf8");
 
 describe("IDK refinement contracts", () => {
+  it("preserves the exact TEAM / CREDITS responsibilities", () => {
+    const home = read("client/src/pages/Home.tsx");
+    const css = read("client/src/index.css");
+    for (const credit of ["VISHALKUMARAN V", "DEVELOPER", "SANKARPRASATH S", "IDEA & CONCEPT", "ROHINI S", "UI/UX DESIGN", "SAYASREE T K", "R&D & PITCHING"]) expect(home).toContain(credit);
+    expect(home).toContain("BUILT BY A TEAM OF ENGINEERS, DESIGNERS &amp; RESEARCHERS.");
+    expect(css).toContain(".team-card:hover");
+    expect(css).toContain("background: var(--acid)");
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(css).toContain(".team-grid { grid-template-columns: 1fr;");
+  });
+
   it("keeps website support separate from circuit diagnosis", () => {
     const router = read("server/routers.ts");
     const help = read("client/src/pages/Help.tsx");

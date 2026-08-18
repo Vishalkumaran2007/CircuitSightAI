@@ -285,3 +285,9 @@
 # IDK Responsive Render Evidence
 
 - [x] Add rendered responsive checks for Help chat and Visual Signal palette layouts at desktop/mobile contracts.
+
+# Team Credits Section
+
+- [x] Add a native TEAM / CREDITS section to the Home page with the four exact member names, role labels, and responsibilities.
+- [x] Add responsive brutalist card styling, hard color-inversion hover states, performant entrance motion, and reduced-motion support.
+- [x] Add regression coverage and verify the Home section without changing existing core workflows.

@@ -12,6 +12,13 @@ const heroImage = "/manus-storage/circuitsight-hero_3e01ea1e.png";
 const scannerImage = "/manus-storage/circuitsight-scanner_401035d5.png";
 const markImage = "/manus-storage/circuitsight-mark_2688ce17.png";
 
+const teamCredits = [
+  { no: "01", name: "VISHALKUMARAN V", role: "DEVELOPER", responsibility: "Full-stack development and technical implementation; AI integration and application architecture; circuit analysis workflow and platform development." },
+  { no: "02", name: "SANKARPRASATH S", role: "IDEA & CONCEPT", responsibility: "Originated the core idea behind CircuitSight AI; defined the initial problem statement and project concept; contributed to the project’s vision and direction." },
+  { no: "03", name: "ROHINI S", role: "UI/UX DESIGN", responsibility: "UI/UX selection and design direction; visual design decisions; user experience and interface planning." },
+  { no: "04", name: "SAYASREE T K", role: "R&D & PITCHING", responsibility: "Research and development work; project research and concept validation; pitch preparation and presentation strategy." },
+];
+
 const steps = [
   { no: "01", title: "CAPTURE", body: "Photograph or upload the physical circuit. A top-down angle gives the clearest read." },
   { no: "02", title: "ANALYZE", body: "AI maps visible components, traces connections, and attaches a confidence score to every finding." },
@@ -174,6 +181,8 @@ export default function Home() {
       <div className="marquee marquee-dark" aria-label="Analysis promise"><div>SCAN <b>•</b> ANALYZE <b>•</b> UNDERSTAND <b>•</b> CORRECT <b>•</b> LEARN <b>•</b> SCAN <b>•</b> ANALYZE <b>•</b> UNDERSTAND <b>•</b> CORRECT <b>•</b> LEARN <b>•</b></div></div>
 
       <section id="learning" className="learning section-dark"><div className="section-kicker"><span>( 03 )</span><span>THE LEARNING LOOP</span><span>BUILD / REPEAT</span></div><div className="learning-grid"><div><h2>THE MISTAKE<br />IS THE <i>TEACHER.</i></h2><p className="learning-lede">CircuitSight keeps a record of recurring mistakes — reversed polarity, floating grounds, missing resistors — and turns the pattern into a personal electronics learning profile.</p><button className="text-link" onClick={() => setLocation("/learning")}>EXPLORE THE LEARNING LOOP <ArrowUpRight size={18} /></button></div><div className="learning-graphic"><div className="giant-number">03</div><div className="loop-node node-1">CAPTURE</div><div className="loop-node node-2">NOTICE</div><div className="loop-node node-3">CORRECT</div><div className="loop-node node-4">REMEMBER</div><svg viewBox="0 0 440 330" aria-hidden="true"><path d="M220 28 C370 28 410 100 370 180 C330 260 118 290 65 190 C12 90 105 26 220 28Z" /></svg></div></div></section>
+
+      <section id="team" className="team-credits section-dark" aria-labelledby="team-title"><div className="section-kicker"><span>( 04 )</span><span>TEAM / CREDITS</span><span>BUILT BY PEOPLE</span></div><div className="team-heading"><div><p className="eyebrow"><span className="live-dot" /> CIRCUITSIGHT / CORE TEAM</p><h2 id="team-title">BUILT<br />BY <i>US.</i></h2></div><p className="team-intro">The people behind the signal: distinct disciplines, one shared direction, and a platform built to turn circuit mistakes into understanding.</p></div><div className="team-grid">{teamCredits.map((member, index) => <motion.article className={`team-card team-card-${index + 1}`} key={member.no} initial={reduceMotion ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.07 }}><div className="team-card-top"><span className="team-number mono">{member.no}</span><span className="team-mark" aria-hidden="true">+</span></div><h3>{member.name}</h3><p className="team-role mono">{member.role}</p><div className="team-rule" /><p className="team-responsibility">{member.responsibility}</p></motion.article>)}</div><p className="team-footer-credit mono">BUILT BY A TEAM OF ENGINEERS, DESIGNERS &amp; RESEARCHERS.</p></section>
 
       <footer className="footer"><div className="footer-brand"><img src={markImage} alt="" /><span>CIRCUITSIGHT <i>AI</i></span></div><p>POINT. SCAN. UNDERSTAND. CORRECT.</p><span className="mono">© 2026 / SIGNAL LAB</span></footer>
       <ImagePreviewDialog src={scannerImage} alt="Sample breadboard circuit" open={samplePreviewOpen} onClose={() => setSamplePreviewOpen(false)} />
