@@ -119,6 +119,10 @@ describe("CircuitSight theme toggle", () => {
     expect(css).toContain(".dark .workspace-nav-label");
     expect(css).toContain(".light-theme .workspace-sidebar, .light-theme .workspace-topbar");
     expect(css).toContain(".light-theme .workspace-nav-label");
+    expect(css).toContain(".dark .message-content, .dark .message-content p { color: #FFFFFF; }");
+    expect(css).toContain(".light-theme .message-content, .light-theme .message-content p { color: #000000; }");
+    expect(css).toContain(".dark .message-meta, .dark .message-attachment small { color: #FFFFFF; }");
+    expect(css).toContain(".light-theme .message-meta, .light-theme .message-attachment small { color: #000000; }");
     expect(css).toContain("color: #FFFFFF");
     expect(css).toContain(".light-theme .hero-stamp");
     expect(css).toContain(".section-dark { background: var(--surface-0)");

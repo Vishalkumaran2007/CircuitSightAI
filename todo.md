@@ -254,3 +254,17 @@
 - [x] Implement functional logout through the existing authentication system and provide an honest switch-account flow without pretending multiple accounts exist.
 - [x] Preserve the existing IDK workspace analysis interface, multimodal analysis, confidence/findings, PDF exports, and reporting behavior.
 - [x] Add rendered interaction, accessibility, responsive, typecheck, test, and production-build coverage for the specification.
+
+# Workspace Message Contrast Fix
+
+- [x] Make saved-thread assistant/user message text explicitly readable in dark and light themes, including metadata and supporting labels.
+- [x] Add regression coverage and verify saved-thread readability at desktop/mobile sizes, tests, and production build.
+
+# Workspace Message Contrast Evidence Follow-up
+
+- [x] Capture a mobile workspace screenshot after the message-contrast fix to verify saved-thread text, metadata, and supporting labels remain readable.
+
+# Workspace Message QA State
+
+- [x] Add a non-invasive `?qa=message` workspace state with visible user and IDK messages for deterministic contrast screenshots.
+- [x] Capture the mobile saved-thread QA screenshot and verify the final full suite/build again.
