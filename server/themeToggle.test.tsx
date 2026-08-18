@@ -61,5 +61,9 @@ describe("CircuitSight theme toggle", () => {
     expect(css).toContain("@media (max-width: 860px) { .theme-toggle");
     expect(css).toContain("prefers-reduced-motion: reduce");
     expect(css).toContain("button:focus-visible");
+    expect(css).toContain('--display-font: "Space Grotesk", sans-serif');
+    expect(css).not.toContain("Bebas Neue");
+    const html = readFileSync(resolve(process.cwd(), "client/index.html"), "utf8");
+    expect(html).not.toContain("Bebas+Neue");
   });
 });

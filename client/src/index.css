@@ -13,7 +13,7 @@
   --font-mono: "Monaspace Krypton", monospace;
 }
 
-:root { --background: #09090B; --foreground: #FAFAFA; --border: #3F3F46; --ring: #DFE104; --acid: #DFE104; --acid-rgb: 223,225,4; --acid-hover: #F4F55E; --muted: #A1A1AA; --green: #57D88C; --red: #FF5B56; --amber: #F5B83D; --display-font: "Bebas Neue", "Space Grotesk", sans-serif; --ease-out: cubic-bezier(.23,1,.32,1); }
+:root { --background: #09090B; --foreground: #FAFAFA; --border: #3F3F46; --ring: #DFE104; --acid: #DFE104; --acid-rgb: 223,225,4; --acid-hover: #F4F55E; --muted: #A1A1AA; --green: #57D88C; --red: #FF5B56; --amber: #F5B83D; --display-font: "Space Grotesk", sans-serif; --ease-out: cubic-bezier(.23,1,.32,1); }
 :root.blue-theme { --ring: #42A5FF; --acid: #42A5FF; --acid-rgb: 66,165,255; --acid-hover: #86C7FF; }
 @layer base { * { @apply border-border outline-ring/50; } html { scroll-behavior: smooth; } body { margin: 0; background: var(--background); color: var(--foreground); font-family: "Space Grotesk", sans-serif; } h1, h2 { font-family: var(--display-font); } button, a { -webkit-tap-highlight-color: transparent; } button:focus-visible, a:focus-visible { outline: 2px solid var(--acid); outline-offset: 4px; } }
 

@@ -158,3 +158,12 @@
 # Theme Keyboard Activation Evidence
 
 - [x] Add explicit Enter/Space activation and visible-focus contract assertions for the theme toggle.
+
+# Typography Rollback
+
+- [x] Restore the previous display font treatment for headings while preserving the current theme and layout behavior.
+- [x] Verify the restored typography across responsive states, tests, and production build.
+
+# Typography Responsive Evidence
+
+- [x] Verify the restored Space Grotesk heading treatment at a mobile breakpoint in addition to desktop.
