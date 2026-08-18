@@ -1,6 +1,5 @@
-# Session-aware Workspace Entry
+# Home Route Transition
 
-- [x] Inspect current home actions and authentication state usage.
-- [x] Route authenticated home actions to the workspace and unauthenticated actions to auth.
-- [x] Make the primary home scan CTA use the corrected entry behavior.
-- [x] Verify routing, typecheck, build, and responsive home behavior.
+- [x] Add a short CircuitSight transition overlay before home CTA navigation.
+- [x] Respect reduced-motion preferences and prevent duplicate navigation clicks.
+- [x] Verify auth/workspace routing, responsive presentation, typecheck, and build.

@@ -43,11 +43,15 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scanState, setScanState] = useState<"idle" | "scanning" | "complete">("idle");
+  const [routeTarget, setRouteTarget] = useState<"auth" | "workspace" | null>(null);
   const reduceMotion = useReducedMotion();
 
   const openWorkspace = () => {
-    if (authLoading) return;
-    setLocation(user ? "/workspace" : "/auth");
+    if (authLoading || routeTarget) return;
+    const target = user ? "workspace" : "auth";
+    setRouteTarget(target);
+    const destination = target === "workspace" ? "/workspace" : "/auth";
+    window.setTimeout(() => setLocation(destination), reduceMotion ? 0 : 280);
   };
 
   const startScan = () => {
@@ -61,7 +65,15 @@ export default function Home() {
   };
 
   return (
-    <main className="site-shell">
+    <main className={`site-shell ${routeTarget ? "is-routing" : ""}`}>
+      {routeTarget && (
+        <div className="route-transition" role="status" aria-live="polite">
+          <div className="route-transition-grid" aria-hidden="true" />
+          <span className="mono">SIGNAL PATH / {routeTarget === "workspace" ? "WORKSPACE" : "AUTH"}</span>
+          <strong>{routeTarget === "workspace" ? "OPENING THE LAB." : "OPENING ACCESS GATE."}</strong>
+          <div className="route-transition-meter" aria-hidden="true"><i /></div>
+        </div>
+      )}
       <div className="noise" aria-hidden="true" />
       <header className="topbar">
         <button className="brand" onClick={() => scrollTo("top")} aria-label="CircuitSight AI home">
