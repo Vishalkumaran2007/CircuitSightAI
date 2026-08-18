@@ -1,5 +1,6 @@
 /* Kinetic Circuit Brutalism: AI-workspace shell, asymmetric rail, upload-ready composer, explicit confidence language. */
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import { ArrowUpRight, FileImage, Loader2, LogOut, Menu, Paperclip, Plus, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
@@ -17,23 +18,54 @@ export default function Workspace() {
   const [messages, setMessages] = useState<WorkspaceMessage[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const analyzeMutation = trpc.circuit.analyze.useMutation();
 
   useEffect(() => {
     if (!loading && !user) setLocation("/auth");
   }, [loading, setLocation, user]);
 
-  const submitQuestion = (prompt = draft) => {
+  const submitQuestion = async (prompt = draft) => {
     const trimmed = prompt.trim();
     if ((!trimmed && !file) || isAnalyzing) return;
-    const attachment = file?.name;
+    const selectedFile = file;
+    const attachment = selectedFile?.name;
     setMessages((current) => [...current, { id: Date.now(), role: "user", content: trimmed || "Analyze this circuit image.", attachment }]);
     setDraft("");
     setFile(null);
     setIsAnalyzing(true);
-    window.setTimeout(() => {
-      setMessages((current) => [...current, { id: Date.now() + 1, role: "assistant", content: "I can help trace this. I’ll inspect the visible components, signal path, polarity, and ground connections before suggesting a correction.\n\nThis workspace is ready for multimodal analysis. Upload a clear top-down circuit image or add more detail to your doubt so the finding can be scored with confidence." }]);
+
+    try {
+      let imageDataUrl: string | undefined;
+      let imageMimeType: string | undefined;
+      if (selectedFile) {
+        if (selectedFile.size > 8 * 1024 * 1024) throw new Error("Please choose an image smaller than 8 MB.");
+        imageDataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(new Error("The circuit image could not be read."));
+          reader.readAsDataURL(selectedFile);
+        });
+        imageMimeType = selectedFile.type;
+      }
+
+      const result = await analyzeMutation.mutateAsync({
+        question: trimmed || undefined,
+        imageDataUrl,
+        imageMimeType,
+      });
+      const findingLines = result.findings.map((finding) => `- ${finding.label}: ${finding.status.toUpperCase()} (${finding.confidence}%) — ${finding.detail}`).join("\n");
+      const steps = result.recommendedSteps.map((step, index) => `${index + 1}. ${step}`).join("\n");
+      setMessages((current) => [...current, {
+        id: Date.now() + 1,
+        role: "assistant",
+        content: `${result.summary}\n\n${result.diagnosis}\n\nCONFIDENCE / ${result.confidence}%\n\nFINDINGS\n${findingLines || "No visible findings were returned."}\n\nRECOMMENDED CHECKS\n${steps || "No additional checks were returned."}\n\nUNCERTAINTY NOTICE\n${result.uncertaintyNotice}`,
+      }]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "The live analysis could not be completed.";
+      setMessages((current) => [...current, { id: Date.now() + 1, role: "assistant", content: `ANALYSIS INTERRUPTED\n\n${message}\n\nTry a clearer circuit photo or ask the question again. No electrical conclusion was made.` }]);
+    } finally {
       setIsAnalyzing(false);
-    }, 1100);
+    }
   };
 
   if (loading) return <main className="dashboard-page dashboard-loading"><div className="dashboard-loader"><Loader2 className="spin" size={30} /><span className="mono">VERIFYING SESSION / WORKSPACE</span><strong>OPENING<br /><em>THE LAB.</em></strong></div></main>;
