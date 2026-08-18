@@ -1,5 +1,6 @@
 /* Kinetic Circuit Brutalism: separate auth surface, acid signal CTA, hard diagnostics, and explicit loading/error states. */
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useState } from "react";
 import { startLogin } from "@/const";
 import { ArrowLeft, ArrowUpRight, Check, Loader2, ShieldCheck } from "lucide-react";
 import { Link } from "wouter";
@@ -8,6 +9,13 @@ const markImage = "/manus-storage/circuitsight-mark_2688ce17.png";
 
 export default function Auth() {
   const { user, loading, error } = useAuth();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  const handleLogin = () => {
+    setIsRedirecting(true);
+    sessionStorage.setItem("circuitsight:auth-pending", "1");
+    startLogin();
+  };
 
   return (
     <main className="site-shell auth-page">
@@ -38,9 +46,9 @@ export default function Auth() {
               <span className="auth-form-label mono">SIGN IN / SIGN UP</span>
               <h2>ONE SIGNAL.<br /><em>ONE ACCOUNT.</em></h2>
               <p>Use the configured secure sign-in provider to continue. Your account keeps your scan history and learning progress together.</p>
-              <button className="google-button" onClick={() => startLogin()} disabled={loading} aria-busy={loading}>
+              <button className={`google-button ${isRedirecting ? "is-redirecting" : ""}`} onClick={handleLogin} disabled={loading || isRedirecting} aria-busy={loading || isRedirecting}>
                 {loading ? <Loader2 className="spin" size={18} /> : <span className="google-g">G</span>}
-                <span>{loading ? "CONNECTING..." : "CONTINUE TO SECURE SIGN-IN"}</span>
+                <span>{loading || isRedirecting ? "OPENING SECURE GATE..." : "CONTINUE TO SECURE SIGN-IN"}</span>
                 {!loading && <ArrowUpRight size={16} />}
               </button>
               {error && <div className="auth-error" role="alert"><strong>HANDSHAKE FAILED</strong><span>We could not complete the sign-in request. Try again or return to the lab.</span></div>}

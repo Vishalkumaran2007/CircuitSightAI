@@ -1,8 +1,8 @@
-# Google Authentication Completion
+# Post-login Dashboard Transition
 
-- [x] Resolve the full-stack upgrade dependency and route conflicts.
-- [x] Build a separate CircuitSight AI login/signup screen.
-- [x] Wire the screen to the configured Google-capable OAuth entry point.
-- [x] Preserve home, demo scanner, report export, and utility routes.
-- [x] Verify auth loading, error, return, and build states.
-- [x] Confirmed the website delegates provider selection to the Manus OAuth portal; Google enablement is managed in that portal because the scaffold does not expose a provider parameter.
+- [x] Inspect and address the reported OAuth callback failure.
+- [x] Add authenticated dashboard route and redirect behavior.
+- [x] Add branded login loading animation.
+- [x] Add successful-login notification on dashboard arrival.
+- [x] Preserve public home, scanner demo, reports, and auth error states.
+- [x] Verify typecheck, tests, build, and responsive auth/dashboard routes.
