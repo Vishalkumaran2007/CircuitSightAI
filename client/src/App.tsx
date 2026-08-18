@@ -8,6 +8,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Workspace from "./pages/Workspace";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/auth" component={Auth} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/workspace" component={Workspace} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

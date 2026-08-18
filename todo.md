@@ -1,8 +1,7 @@
-# Post-login Dashboard Transition
+# Authenticated Circuit Workspace
 
-- [x] Inspect and address the reported OAuth callback failure.
-- [x] Add authenticated dashboard route and redirect behavior.
-- [x] Add branded login loading animation.
-- [x] Add successful-login notification on dashboard arrival.
-- [x] Preserve public home, scanner demo, reports, and auth error states.
-- [x] Verify typecheck, tests, build, and responsive auth/dashboard routes.
+- [x] Add a dedicated post-login workspace route for circuit questions.
+- [x] Add text entry for circuit doubts and an upload control for circuit images.
+- [x] Add chat-style submission, loading, and empty states without overstating AI certainty.
+- [x] Preserve dashboard, home, scanner demo, reports, and auth routes.
+- [x] Verify responsive workspace behavior, typecheck, tests, and build.
