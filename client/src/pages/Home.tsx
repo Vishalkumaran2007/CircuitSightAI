@@ -24,9 +24,9 @@ const findings = [
 ];
 
 const teamCredits = [
-  { number: "01", name: "VISHALKUMARAN V", role: "DEVELOPER", responsibility: "Full-stack development and technical implementation; AI integration and application architecture; circuit analysis workflow and platform development.", href: "https://vishalkumaran2007.github.io/Portfolio/" },
-  { number: "02", name: "SANKARPRASATH S", role: "IDEA & CONCEPT", responsibility: "Originated the core idea behind CircuitSight AI; defined the initial problem statement and project concept; contributed to the project's vision and direction." },
-  { number: "03", name: "ROHINI S", role: "UI/UX DESIGN", responsibility: "UI/UX selection and design direction; visual design decisions; user experience and interface planning." },
+  { number: "01", name: "SANKARPRASATH S", role: "IDEA & CONCEPT", responsibility: "Originated the core idea behind CircuitSight AI; defined the initial problem statement and project concept; contributed to the project's vision and direction." },
+  { number: "02", name: "ROHINI S", role: "UI/UX DESIGN", responsibility: "UI/UX selection and design direction; visual design decisions; user experience and interface planning." },
+  { number: "03", name: "VISHALKUMARAN V", role: "DEVELOPER", responsibility: "Full-stack development and technical implementation; AI integration and application architecture; circuit analysis workflow and platform development.", href: "https://vishalkumaran2007.github.io/Portfolio/" },
   { number: "04", name: "SAYASREE T K", role: "R&D & PITCHING", responsibility: "Research and development work; project research and concept validation; pitch preparation and presentation strategy." },
 ];
 

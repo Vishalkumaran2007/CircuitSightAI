@@ -45,3 +45,8 @@
 
 - [ ] Push the latest Vishalkumaran V portfolio-link checkpoint and current project state to Vishalkumaran2007/CircuitSightAI.
 - [ ] Verify the pushed GitHub branch and commit.
+
+# Team Credits Order
+
+- [x] Reorder the TEAM / CREDITS cards to 01 Sankarprasath, 02 Rohini, 03 Vishalkumaran, and 04 Sayasree.
+- [x] Preserve the Vishalkumaran portfolio link and verify the reordered section before publishing.
