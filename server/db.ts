@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { CircuitMessage, CircuitThread, InsertUser, circuitMessages, circuitThreads, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -59,7 +59,6 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = 'admin';
       updateSet.role = 'admin';
     }
-
     if (!values.lastSignedIn) {
       values.lastSignedIn = new Date();
     }
@@ -89,4 +88,49 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function listCircuitThreads(userId: number): Promise<CircuitThread[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(circuitThreads).where(eq(circuitThreads.userId, userId)).orderBy(desc(circuitThreads.updatedAt));
+}
+
+export async function getCircuitThread(userId: number, threadId: number): Promise<CircuitThread | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(circuitThreads).where(eq(circuitThreads.id, threadId)).limit(1);
+  const thread = result[0];
+  return thread?.userId === userId ? thread : undefined;
+}
+
+export async function listCircuitMessages(userId: number, threadId: number): Promise<CircuitMessage[]> {
+  const thread = await getCircuitThread(userId, threadId);
+  if (!thread) return [];
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(circuitMessages).where(eq(circuitMessages.threadId, threadId)).orderBy(circuitMessages.createdAt);
+}
+
+export async function createCircuitThread(userId: number, title: string): Promise<CircuitThread> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable.");
+  const result = await db.insert(circuitThreads).values({ userId, title });
+  const threadId = Number((result as unknown as [{ insertId: number }])[0]?.insertId);
+  const thread = await getCircuitThread(userId, threadId);
+  if (!thread) throw new Error("Circuit thread could not be created.");
+  return thread;
+}
+
+export async function addCircuitMessage(input: {
+  userId: number;
+  threadId: number;
+  role: "user" | "assistant";
+  content: string;
+  attachmentName?: string | null;
+}): Promise<void> {
+  const thread = await getCircuitThread(input.userId, input.threadId);
+  if (!thread) throw new Error("Circuit thread was not found.");
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable.");
+  await db.insert(circuitMessages).values({ ...input, attachmentName: input.attachmentName ?? null });
+  await db.update(circuitThreads).set({ updatedAt: new Date() }).where(eq(circuitThreads.id, input.threadId));
+}

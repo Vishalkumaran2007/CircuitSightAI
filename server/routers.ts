@@ -4,6 +4,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { invokeLLM } from "./_core/llm";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import * as db from "./db";
 
 const circuitFindingSchema = {
   type: "object",
@@ -49,6 +50,21 @@ const getTextContent = (content: unknown) => {
   return "";
 };
 
+type CircuitAnalysis = {
+  summary: string;
+  diagnosis: string;
+  confidence: number;
+  findings: Array<{ label: string; status: string; confidence: number; detail: string }>;
+  recommendedSteps: string[];
+  uncertaintyNotice: string;
+};
+
+const formatAnalysisForThread = (analysis: CircuitAnalysis) => {
+  const findings = analysis.findings.map(finding => `- ${finding.label}: ${finding.status.toUpperCase()} (${finding.confidence}%) — ${finding.detail}`).join("\n");
+  const steps = analysis.recommendedSteps.map((step, index) => `${index + 1}. ${step}`).join("\n");
+  return `${analysis.summary}\n\n${analysis.diagnosis}\n\nCONFIDENCE / ${analysis.confidence}%\n\nFINDINGS\n${findings || "No visible findings were returned."}\n\nRECOMMENDED CHECKS\n${steps || "No additional checks were returned."}\n\nUNCERTAINTY NOTICE\n${analysis.uncertaintyNotice}`;
+};
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -60,15 +76,31 @@ export const appRouter = router({
     }),
   }),
   circuit: router({
+    listThreads: protectedProcedure.query(({ ctx }) => db.listCircuitThreads(ctx.user.id)),
+    getThread: protectedProcedure.input(z.object({ threadId: z.number().int().positive() })).query(async ({ ctx, input }) => {
+      const thread = await db.getCircuitThread(ctx.user.id, input.threadId);
+      if (!thread) throw new Error("Circuit thread was not found.");
+      const messages = await db.listCircuitMessages(ctx.user.id, input.threadId);
+      return { thread, messages };
+    }),
     analyze: protectedProcedure
       .input(z.object({
+        threadId: z.number().int().positive().optional(),
         question: z.string().trim().max(4000).optional(),
         imageDataUrl: z.string().max(16_000_000).optional(),
         imageMimeType: z.string().max(100).optional(),
+        attachmentName: z.string().max(255).optional(),
       }).refine(input => Boolean(input.question || input.imageDataUrl), {
         message: "Provide a circuit question or upload an image.",
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const titleSeed = input.question?.trim() || input.attachmentName || "Circuit analysis";
+        const thread = input.threadId
+          ? await db.getCircuitThread(ctx.user.id, input.threadId)
+          : await db.createCircuitThread(ctx.user.id, titleSeed.slice(0, 180));
+        if (!thread) throw new Error("Circuit thread was not found.");
+        const userContent = input.question?.trim() || "Analyze this circuit image.";
+        await db.addCircuitMessage({ userId: ctx.user.id, threadId: thread.id, role: "user", content: userContent, attachmentName: input.attachmentName });
         const content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string; detail: "high" } }> = [
           {
             type: "text",
@@ -94,14 +126,10 @@ export const appRouter = router({
         const raw = getTextContent(response.choices[0]?.message?.content);
         if (!raw) throw new Error("The analysis service returned an empty response.");
         try {
-          return JSON.parse(raw) as {
-            summary: string;
-            diagnosis: string;
-            confidence: number;
-            findings: Array<{ label: string; status: string; confidence: number; detail: string }>;
-            recommendedSteps: string[];
-            uncertaintyNotice: string;
-          };
+          const analysis = JSON.parse(raw) as CircuitAnalysis;
+          const displayContent = formatAnalysisForThread(analysis);
+          await db.addCircuitMessage({ userId: ctx.user.id, threadId: thread.id, role: "assistant", content: displayContent });
+          return { thread, analysis, displayContent };
         } catch {
           throw new Error("The analysis service returned an unreadable response.");
         }

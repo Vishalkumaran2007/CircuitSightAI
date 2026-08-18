@@ -8,6 +8,13 @@
       "when": 1787039808987,
       "tag": "0000_bright_proteus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1787045515966,
+      "tag": "0001_silent_captain_midlands",
+      "breakpoints": true
     }
   ]
 }

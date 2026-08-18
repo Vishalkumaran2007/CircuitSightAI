@@ -86,12 +86,12 @@ export default function Home() {
           <button onClick={() => scrollTo("lab")}>LAB</button>
           <button onClick={() => scrollTo("learning")}>LEARNING</button>
           <div className="mobile-nav-actions">
-            <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
+            <button className="nav-quiet" onClick={() => setLocation("/auth")}>SIGN IN</button>
             <button className="button button-acid" onClick={openWorkspace} aria-disabled={authLoading}>START SCANNING <ArrowUpRight size={16} /></button>
           </div>
         </nav>
         <div className="nav-actions">
-          <button className="nav-quiet" onClick={() => { window.location.href = "/auth"; }}>SIGN IN</button>
+          <button className="nav-quiet" onClick={() => setLocation("/auth")}>SIGN IN</button>
           <button className="button button-acid nav-cta" onClick={openWorkspace} aria-disabled={authLoading}>START SCANNING <ArrowUpRight size={16} /></button>
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button>
         </div>
@@ -135,11 +135,11 @@ export default function Home() {
       </section>
 
       <section id="lab" className="lab-section">
-        <div className="section-kicker lab-kicker"><span>( 02 )</span><span>THE CIRCUIT LAB</span><span>LIVE PREVIEW</span></div>
-        <div className="lab-heading"><h2>POINT.<br />SCAN.<br /><i>UNDERSTAND.</i></h2><div className="lab-side-note"><span className="mono">SCAN / 0007</span><p>Upload a circuit to see how the system turns visible hardware into a readable explanation.</p><button className="button button-outline" onClick={startScan}><ScanLine size={17} /> {scanState === "idle" ? "RUN DEMO SCAN" : scanState === "scanning" ? "ANALYZING..." : "SCAN COMPLETE"}</button></div></div>
+        <div className="section-kicker lab-kicker"><span>( 02 )</span><span>THE CIRCUIT LAB</span><span>SAMPLE CIRCUIT DEMO</span></div>
+        <div className="lab-heading"><h2>POINT.<br />SCAN.<br /><i>UNDERSTAND.</i></h2><div className="lab-side-note"><span className="mono">SAMPLE CIRCUIT / NOT SAVED</span><p>This teaching sample shows how CircuitSight presents an analysis. It is not user data and is never saved to your account.</p><button className="button button-outline" onClick={startScan}><ScanLine size={17} /> {scanState === "idle" ? "RUN SAMPLE DEMO" : scanState === "scanning" ? "ANALYZING SAMPLE..." : "SAMPLE COMPLETE"}</button></div></div>
         <div className="scanner-frame">
           <div className="scanner-image"><img src={scannerImage} alt="Circuit board prepared for scanning" /><div className={`scan-beam ${scanState !== "idle" ? "active" : ""}`} /><div className="scan-target target-a" /><div className="scan-target target-b" /><div className="scan-target target-c" /><div className="image-label mono">INPUT / BREADBOARD_07.JPG</div></div>
-          <aside className="analysis-panel"><div className="analysis-top"><span>ANALYSIS</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>OVERALL CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Some connections cannot be verified confidently from this image. Retake from top-down with labels visible.</p></div></div><button className="upload-row" onClick={startScan}><Upload size={17} /><span>UPLOAD REFERENCE CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD CORRECTION REPORT" : "REPORT AVAILABLE AFTER ANALYSIS"}</span><span className="mono">HTML</span></button></aside>
+          <aside className="analysis-panel"><div className="analysis-top"><span>SAMPLE ANALYSIS / DEMO</span><span className={`status ${scanState === "complete" ? "complete" : ""}`}><span />{scanState === "complete" ? "COMPLETE" : "READY"}</span></div><div className="confidence-block"><strong>{scanState === "complete" ? "92" : "86"}<sup>%</sup></strong><span>SAMPLE CONFIDENCE</span></div><div className="finding-list">{findings.map((item) => <div className="finding" key={item.label}><span><i className={`tone-${item.tone}`} />{item.label}</span><b className="mono">{item.value}</b></div>)}</div><div className="analysis-warning"><span className="warning-icon">!</span><div><strong>WIRE PATH / UNCERTAIN</strong><p>Sample output only. Submit your own photo in the workspace for a saved analysis.</p></div></div><button className="upload-row" onClick={openWorkspace}><Upload size={17} /><span>ANALYZE YOUR CIRCUIT</span><ArrowUpRight size={16} /></button><button className="report-row" onClick={downloadCorrectionReport} disabled={scanState !== "complete"}><Download size={17} /><span>{scanState === "complete" ? "DOWNLOAD SAMPLE REPORT" : "SAMPLE REPORT AVAILABLE AFTER DEMO"}</span><span className="mono">HTML</span></button></aside>
         </div>
       </section>
 

@@ -2,8 +2,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
-const { invokeLLMMock } = vi.hoisted(() => ({ invokeLLMMock: vi.fn() }));
+const { invokeLLMMock, dbMock } = vi.hoisted(() => ({
+  invokeLLMMock: vi.fn(),
+  dbMock: {
+    createCircuitThread: vi.fn(),
+    getCircuitThread: vi.fn(),
+    addCircuitMessage: vi.fn(),
+  },
+}));
 vi.mock("./_core/llm", () => ({ invokeLLM: invokeLLMMock }));
+vi.mock("./db", () => dbMock);
 
 type AuthenticatedUser = NonNullable<TrpcContext["user"]>;
 
@@ -14,6 +22,7 @@ function createContext(): TrpcContext {
     email: "learner@example.com",
     name: "Circuit Learner",
     loginMethod: "google",
+    emailVerified: true,
     role: "user",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -42,6 +51,17 @@ const validAnalysis = {
 describe("circuit.analyze", () => {
   beforeEach(() => {
     invokeLLMMock.mockReset();
+    dbMock.createCircuitThread.mockReset();
+    dbMock.getCircuitThread.mockReset();
+    dbMock.addCircuitMessage.mockReset();
+    dbMock.createCircuitThread.mockImplementation(async (userId: number, title: string) => ({
+      id: 999,
+      userId,
+      title,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    dbMock.addCircuitMessage.mockResolvedValue(undefined);
   });
 
   it("returns a structured analysis for an authenticated text query", async () => {
@@ -52,7 +72,9 @@ describe("circuit.analyze", () => {
     const caller = appRouter.createCaller(createContext());
     const result = await caller.circuit.analyze({ question: "Why is my LED not lighting?" });
 
-    expect(result).toEqual(validAnalysis);
+    expect(result.analysis).toEqual(validAnalysis);
+    expect(result.thread.title).toBe("Why is my LED not lighting?");
+    expect(result.displayContent).toContain("CONFIDENCE / 78%");
     expect(invokeLLMMock).toHaveBeenCalledOnce();
     expect(invokeLLMMock.mock.calls[0]?.[0].response_format.type).toBe("json_schema");
   });

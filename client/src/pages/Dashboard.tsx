@@ -1,5 +1,6 @@
 /* Kinetic Circuit Brutalism: authenticated landing surface with explicit session loading, success signal, and lab controls. */
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import { ArrowUpRight, CircleUserRound, Loader2, LogOut, ScanLine } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
@@ -10,6 +11,7 @@ const markImage = "/manus-storage/circuitsight-mark_2688ce17.png";
 export default function Dashboard() {
   const { user, loading, error, logout } = useAuth();
   const [, setLocation] = useLocation();
+  const { data: threads = [] } = trpc.circuit.listThreads.useQuery(undefined, { enabled: Boolean(user) });
 
   useEffect(() => {
     if (loading) return;
@@ -50,7 +52,7 @@ export default function Dashboard() {
         <p>Your lab is ready. Start a new scan, inspect your correction history, or keep building the signal.</p>
         <div className="dashboard-actions"><Link className="button button-acid button-large" href="/workspace"><ScanLine size={18} /> START A SCAN <ArrowUpRight size={17} /></Link><Link className="text-link" href="/">RETURN TO HOME <ArrowUpRight size={17} /></Link></div>
       </section>
-      <section className="dashboard-grid"><article className="dashboard-card dashboard-card-acid"><span className="mono">01 / NEW INPUT</span><h2>SCAN<br />A CIRCUIT.</h2><Link href="/workspace" aria-label="Start a new scan"><ArrowUpRight size={24} /></Link></article><article className="dashboard-card"><span className="mono">02 / YOUR SIGNALS</span><strong>00</strong><h3>SAVED SCANS</h3><p>Once you analyze a physical circuit, your correction trail will show up here.</p></article><article className="dashboard-card"><span className="mono">03 / LEARNING LOOP</span><strong>—</strong><h3>PROFILE STARTING</h3><p>Recurring mistakes will become useful patterns as you keep building.</p></article></section>
+      <section className="dashboard-grid"><article className="dashboard-card dashboard-card-acid"><span className="mono">01 / NEW INPUT</span><h2>SCAN<br />A CIRCUIT.</h2><Link href="/workspace" aria-label="Start a new scan"><ArrowUpRight size={24} /></Link></article><article className="dashboard-card"><span className="mono">02 / YOUR SIGNALS</span><strong>{String(threads.length).padStart(2, "0")}</strong><h3>SAVED ANALYSES</h3><p>{threads.length ? "Your signed-in account has saved circuit analyses ready to reopen." : "No saved analyses yet. Your first submitted circuit will appear here."}</p></article><article className="dashboard-card"><span className="mono">03 / LEARNING LOOP</span><strong>—</strong><h3>LEARNING PATTERNS</h3><p>Patterns are calculated only after you submit real circuit analyses.</p></article></section>
       <div className="marquee marquee-yellow"><div>SESSION ACTIVE <b>•</b> SAVE THE SIGNAL <b>•</b> KEEP THE LESSON <b>•</b> SESSION ACTIVE <b>•</b> SAVE THE SIGNAL <b>•</b> KEEP THE LESSON <b>•</b></div></div>
     </main>
   );
