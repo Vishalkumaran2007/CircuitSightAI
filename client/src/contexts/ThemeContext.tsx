@@ -2,7 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light";
 type ThemePreference = Theme | "system";
-export type Palette = "lavender" | "cyan" | "amber" | "mint";
+export type Palette = "obsidian" | "lavender" | "electric" | "midnight" | "terminal" | "volt" | "cyber" | "plasma" | "ocean" | "circuit" | "signal" | "graphite" | "ice" | "sunset" | "rose" | "mono";
+
+export const PALETTE_IDS: Palette[] = ["obsidian", "lavender", "electric", "midnight", "terminal", "volt", "cyber", "plasma", "ocean", "circuit", "signal", "graphite", "ice", "sunset", "rose", "mono"];
 
 interface ThemeContextType {
   theme: Theme;
@@ -50,8 +52,8 @@ export function ThemeProvider({ children, defaultTheme = "dark", switchable = tr
   });
   const [palette, setPaletteState] = useState<Palette>(() => {
     if (typeof window === "undefined") return "lavender";
-    const stored = window.localStorage.getItem("circuitsight-theme-palette");
-    return stored === "cyan" || stored === "amber" || stored === "mint" ? stored : "lavender";
+    const stored = window.localStorage.getItem("circuitsight-theme-palette") as Palette | null;
+    return stored && PALETTE_IDS.includes(stored) ? stored : "lavender";
   });
   const [highContrast, setHighContrast] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -74,7 +76,7 @@ export function ThemeProvider({ children, defaultTheme = "dark", switchable = tr
       root.classList.toggle("dark", theme === "dark");
       root.classList.toggle("light-theme", theme === "light");
       root.classList.toggle("high-contrast", highContrast);
-      if (typeof root.classList.remove === "function") root.classList.remove("palette-lavender", "palette-cyan", "palette-amber", "palette-mint");
+      if (typeof root.classList.remove === "function") root.classList.remove(...PALETTE_IDS.map(id => `palette-${id}`));
       if (typeof root.classList.add === "function") root.classList.add(`palette-${palette}`);
     }
     if (switchable && typeof window !== "undefined") {

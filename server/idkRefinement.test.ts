@@ -39,14 +39,21 @@ describe("IDK refinement contracts", () => {
     expect(help).toContain("trpc.help.chat.useMutation");
   });
 
-  it("defines all four Visual Signal palettes", () => {
+  it("defines all 16 Visual Signal themes", () => {
     const page = read("client/src/pages/VisualSignal.tsx");
     const context = read("client/src/contexts/ThemeContext.tsx");
-    for (const palette of ["lavender", "cyan", "amber", "mint"]) {
+    const css = read("client/src/index.css");
+    for (const palette of ["obsidian", "lavender", "electric", "midnight", "terminal", "volt", "cyber", "plasma", "ocean", "circuit", "signal", "graphite", "ice", "sunset", "rose", "mono"]) {
       expect(page).toContain(`id: "${palette}"`);
-      expect(context).toContain(`palette-${palette}`);
+      expect(css).toContain(`palette-${palette}`);
     }
+    expect(context).toContain("PALETTE_IDS");
     expect(context).toContain("circuitsight-theme-palette");
+    expect(page).toContain("COLOR SIGNAL");
+    expect(page).toContain("ACTIVE");
+    expect(page).toContain("BACK TO SETTINGS");
+    expect(css).toContain(".palette-grid { grid-template-columns: repeat(4, minmax(0, 1fr));");
+    expect(css).toContain("@media (max-width: 760px) { .palette-grid { grid-template-columns: repeat(2, minmax(0, 1fr));");
   });
 
   it("limits appearance controls to Home and Visual Signal", () => {

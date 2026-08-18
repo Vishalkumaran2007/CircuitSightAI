@@ -306,3 +306,9 @@
 
 - [x] Ensure DARK / SYSTEM / A11Y controls render only on Home and Visual Signal routes and remain absent elsewhere.
 - [x] Add regression coverage for allowed and disallowed routes without changing control functionality.
+
+# Attached Specification Review
+
+- [x] Review the attached specification and map each requirement to the current CircuitSight AI implementation.
+- [x] Apply compatible specification requirements without changing protected core workflows, authentication, or existing visual identity.
+- [x] Add regression coverage and validate the specification update before publishing.
