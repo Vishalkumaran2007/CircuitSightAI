@@ -127,3 +127,34 @@
 
 - [x] Add dismissal assertions to the Home CTA integration test for all three destinations.
 - [x] Document the sandbox interaction-layer limitation for live Home CTA clicks; browser-independent integration coverage and route-surface inspection are complete.
+
+# Typography and Theme Switch
+
+- [x] Add a distinctive display font treatment for hero and major section headings.
+- [x] Add a visible persistent theme toggle for black-yellow and black-electric-blue modes.
+- [x] Verify theme persistence, contrast, responsive navigation, tests, and production build.
+
+# Theme Visual QA
+
+- [x] Add a non-invasive theme query state for desktop and mobile visual verification.
+- [x] Capture yellow and electric-blue theme previews with the toggle visible.
+
+# Display Font QA Refinement
+
+- [x] Tune the distinctive display face so the hero headline keeps deliberate line breaks at desktop and mobile widths.
+
+# Theme Toggle Visibility QA
+
+- [x] Explicitly verify the floating theme-toggle control is visible and usable in both yellow and blue desktop/mobile QA states.
+
+# Theme Mobile Visibility Evidence
+
+- [x] Explicitly confirm the floating theme toggle is visible and reachable in both yellow and blue mobile QA states.
+
+# Theme Toggle Interaction Evidence
+
+- [x] Add a direct interaction test confirming the toggle changes palette labels and remains keyboard-focusable.
+
+# Theme Keyboard Activation Evidence
+
+- [x] Add explicit Enter/Space activation and visible-focus contract assertions for the theme toggle.

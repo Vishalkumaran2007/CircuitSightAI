@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Workspace from "./pages/Workspace";
 import Learning from "./pages/Learning";
 import RouteTransition from "./components/RouteTransition";
+import ThemeToggle from "./components/ThemeToggle";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -30,11 +31,12 @@ function Router() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="yellow" switchable>
         <TooltipProvider>
           <Toaster theme="dark" />
           <Router />
           <RouteTransition />
+          <ThemeToggle />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

@@ -126,7 +126,7 @@ export default function Home() {
         <div className="hero-trace trace-two" aria-hidden="true"><span /><span /><span /></div>
         <div className="hero-copy">
           <p className="eyebrow"><span className="live-dot" /> COMPUTER VISION / ELECTRONICS LAB 01</p>
-          <h1 id="hero-title">YOUR<br /><em>CIRCUIT</em><br />IS TALKING.</h1>
+          <h1 id="hero-title">YOUR<br /><em>CIRCUIT</em><br /><span className="hero-tail">IS<span className="hero-mobile-break"><br /></span> TALKING.</span></h1>
           <p className="hero-lede">Photograph your physical circuit. CircuitSight AI identifies components, traces visible connections, detects likely mistakes, explains the problem, and guides you toward the correct circuit.</p>
           <div className="hero-actions">
             <button className="button button-acid button-large" onClick={openWorkspace} aria-disabled={authLoading}>SCAN A CIRCUIT <ArrowUpRight size={19} /></button>

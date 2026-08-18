@@ -234,7 +234,7 @@ export default function ComponentsShowcase() {
             Shadcn/ui Component Library
           </h2>
           <Button variant="outline" size="icon" onClick={toggleTheme}>
-            {theme === "light" ? (
+            {theme === "yellow" ? (
               <Moon className="h-5 w-5" />
             ) : (
               <Sun className="h-5 w-5" />
