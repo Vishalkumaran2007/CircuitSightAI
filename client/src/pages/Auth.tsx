@@ -20,7 +20,7 @@ export default function Auth() {
       </header>
       <section className="auth-layout">
         <div className="auth-copy">
-          <div className="auth-kicker mono"><span className="live-dot" /> ACCESS GATE / GOOGLE PROVIDER</div>
+          <div className="auth-kicker mono"><span className="live-dot" /> ACCESS GATE / OAUTH PROVIDER</div>
           <h1>ENTER<br /><em>THE LAB.</em></h1>
           <p>Sign in to save circuit scans, export correction reports, and build a learning profile from the mistakes you keep finding.</p>
           <div className="auth-signal-list">
@@ -37,10 +37,10 @@ export default function Auth() {
             <div className="auth-form">
               <span className="auth-form-label mono">SIGN IN / SIGN UP</span>
               <h2>ONE SIGNAL.<br /><em>ONE ACCOUNT.</em></h2>
-              <p>Use Google to continue. Your account keeps your scan history and learning progress together.</p>
+              <p>Use the configured secure sign-in provider to continue. Your account keeps your scan history and learning progress together.</p>
               <button className="google-button" onClick={() => startLogin()} disabled={loading} aria-busy={loading}>
                 {loading ? <Loader2 className="spin" size={18} /> : <span className="google-g">G</span>}
-                <span>{loading ? "CONNECTING..." : "CONTINUE WITH GOOGLE"}</span>
+                <span>{loading ? "CONNECTING..." : "CONTINUE TO SECURE SIGN-IN"}</span>
                 {!loading && <ArrowUpRight size={16} />}
               </button>
               {error && <div className="auth-error" role="alert"><strong>HANDSHAKE FAILED</strong><span>We could not complete the sign-in request. Try again or return to the lab.</span></div>}

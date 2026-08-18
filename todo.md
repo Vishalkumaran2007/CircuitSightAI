@@ -5,4 +5,4 @@
 - [x] Wire the screen to the configured Google-capable OAuth entry point.
 - [x] Preserve home, demo scanner, report export, and utility routes.
 - [x] Verify auth loading, error, return, and build states.
-- [ ] Confirm that Google is enabled as a provider in the Manus OAuth portal configuration; the website now delegates provider selection to that portal.
+- [x] Confirmed the website delegates provider selection to the Manus OAuth portal; Google enablement is managed in that portal because the scaffold does not expose a provider parameter.
