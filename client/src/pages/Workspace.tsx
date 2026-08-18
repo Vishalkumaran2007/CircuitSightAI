@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import React from "react";
 import { CircuitPdfReportAction } from "@/components/CircuitPdfReportAction";
 import { ImagePreviewButton } from "@/components/ImagePreviewButton";
 import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";

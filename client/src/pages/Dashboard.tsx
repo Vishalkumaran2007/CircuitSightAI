@@ -1,8 +1,8 @@
 /* Kinetic Circuit Brutalism: authenticated landing surface with explicit session loading, success signal, and lab controls. */
+import React, { useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { ArrowUpRight, CircleUserRound, Loader2, LogOut, ScanLine } from "lucide-react";
-import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 

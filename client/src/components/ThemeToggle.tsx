@@ -4,7 +4,7 @@ import { useTheme } from "../contexts/ThemeContext";
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
-  const blueMode = theme === "blue";
+  const darkMode = theme === "dark";
   return (
     <button
       type="button"
@@ -16,11 +16,11 @@ export default function ThemeToggle() {
           toggleTheme();
         }
       }}
-      aria-label={blueMode ? "Switch to yellow signal theme" : "Switch to blue signal theme"}
-      title={blueMode ? "Switch to yellow signal theme" : "Switch to blue signal theme"}
+      aria-label={darkMode ? "Switch to light white-black theme" : "Switch to dark black-blue theme"}
+      title={darkMode ? "Switch to light white-black theme" : "Switch to dark black-blue theme"}
     >
-      {blueMode ? <Sun size={15} /> : <Moon size={15} />}
-      <span className="mono">{blueMode ? "YELLOW" : "BLUE"}</span>
+      {darkMode ? <Sun size={15} /> : <Moon size={15} />}
+      <span className="mono">{darkMode ? "LIGHT" : "DARK"}</span>
     </button>
   );
 }

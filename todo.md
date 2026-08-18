@@ -167,3 +167,26 @@
 # Typography Responsive Evidence
 
 - [x] Verify the restored Space Grotesk heading treatment at a mobile breakpoint in addition to desktop.
+
+# Black Blue and White Black Themes
+
+- [x] Make dark mode black with electric-blue accents.
+- [x] Make light mode white with black text and controls.
+- [x] Verify both palettes across desktop/mobile, tests, and production build.
+
+# Theme Token Audit Follow-up
+
+- [x] Replace remaining hardcoded dark and gray home-page surfaces with shared dark/light theme tokens.
+- [x] Audit auth, workspace, dashboard, and learning surfaces for consistent black-blue and white-black styling.
+- [x] Add regression coverage for key themed surfaces and light-mode contrast contracts.
+
+# Theme Audit Evidence Follow-up
+
+- [x] Make the exported correction report use the active semantic palette instead of legacy hardcoded colors.
+- [x] Verify auth, workspace, dashboard, and learning surfaces use shared semantic theme classes/tokens.
+- [x] Expand regression tests for themed surface and contrast contracts across representative routes.
+
+# Route Theme Render Evidence
+
+- [x] Add rendered route-level theme contract tests for auth, workspace, dashboard, and learning surfaces.
+- [x] Capture explicit desktop/mobile verification evidence for representative authenticated and public screens.
