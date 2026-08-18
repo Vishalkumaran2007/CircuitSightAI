@@ -25,7 +25,7 @@ describe("CircuitSight theme toggle", () => {
         <ThemeToggle />
       </ThemeProvider>,
     );
-    expect(markup).toContain("Switch to dark black-blue theme");
+    expect(markup).toContain("Switch to dark black-lavender theme");
     expect(markup).toContain(">DARK</span>");
     expect(markup).toContain("lucide-moon");
   });
@@ -46,7 +46,7 @@ describe("CircuitSight theme toggle", () => {
     let prevented = false;
     act(() => button.props.onKeyDown({ key: "Enter", preventDefault: () => { prevented = true; } }));
     expect(prevented).toBe(true);
-    expect(renderer!.root.findByType("button").props["aria-label"]).toBe("Switch to dark black-blue theme");
+    expect(renderer!.root.findByType("button").props["aria-label"]).toBe("Switch to dark black-lavender theme");
     act(() => button.props.onKeyDown({ key: " ", preventDefault: () => undefined }));
     expect(renderer!.root.findByType("button").props["aria-label"]).toBe("Switch to light white-black theme");
     renderer!.unmount();
@@ -55,7 +55,7 @@ describe("CircuitSight theme toggle", () => {
   it("keeps the palette and responsive toggle contract in the stylesheet", () => {
     const css = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
     expect(css).toContain(":root.light-theme");
-    expect(css).toContain("--acid: #42A5FF");
+    expect(css).toContain("--acid: #C4B5FD");
     expect(css).toContain("--background: #FFFFFF");
     expect(css).toContain("--foreground: #000000");
     expect(css).toContain("--surface-0: #000000");
@@ -67,7 +67,7 @@ describe("CircuitSight theme toggle", () => {
     for (const selector of [".site-shell", ".auth-page", ".workspace-page", ".dashboard-page", ".learning-page", ".diagnostic-page"]) {
       expect(css).toContain(selector);
     }
-    expect(css).toContain("--acid-rgb: 66,165,255");
+    expect(css).toContain("--acid-rgb: 196,181,253");
     expect(css).toContain(".theme-toggle");
     expect(css).toContain("@media (max-width: 860px) { .theme-toggle");
     expect(css).toContain("prefers-reduced-motion: reduce");
@@ -78,7 +78,7 @@ describe("CircuitSight theme toggle", () => {
     expect(html).not.toContain("Bebas+Neue");
     const home = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
     expect(home).toContain('classList.contains("light-theme")');
-    expect(home).toContain('accent: "#42A5FF"');
+    expect(home).toContain('accent: "#C4B5FD"');
     expect(home).not.toContain("background:#09090b");
     for (const route of ["Auth", "Workspace", "Dashboard", "Learning"]) {
       const routeSource = readFileSync(resolve(process.cwd(), `client/src/pages/${route}.tsx`), "utf8");

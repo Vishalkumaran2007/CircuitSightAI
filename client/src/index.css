@@ -13,7 +13,7 @@
   --font-mono: "Monaspace Krypton", monospace;
 }
 
-:root { --background: #000000; --foreground: #FFFFFF; --border: #2B2B2B; --ring: #42A5FF; --acid: #42A5FF; --acid-rgb: 66,165,255; --acid-hover: #86C7FF; --muted: #A7A7A7; --green: #57D88C; --red: #FF5B56; --amber: #F5B83D; --lab-bg: #42A5FF; --lab-foreground: #000000; --surface-0: #000000; --surface-1: #0B0B0B; --surface-2: #171717; --text-soft: #D4D4D8; --display-font: "Space Grotesk", sans-serif; --ease-out: cubic-bezier(.23,1,.32,1); }
+:root { --background: #000000; --foreground: #FFFFFF; --border: #2B2B2B; --ring: #C4B5FD; --acid: #C4B5FD; --acid-rgb: 196,181,253; --acid-hover: #DDD6FE; --muted: #A7A7A7; --green: #57D88C; --red: #FF5B56; --amber: #F5B83D; --lab-bg: #C4B5FD; --lab-foreground: #000000; --surface-0: #000000; --surface-1: #0B0B0B; --surface-2: #171717; --text-soft: #D4D4D8; --display-font: "Space Grotesk", sans-serif; --ease-out: cubic-bezier(.23,1,.32,1); }
 :root.light-theme { --background: #FFFFFF; --foreground: #000000; --border: #000000; --ring: #000000; --acid: #000000; --acid-rgb: 0,0,0; --acid-hover: #2B2B2B; --muted: #555555; --lab-bg: #FFFFFF; --lab-foreground: #000000; --surface-0: #FFFFFF; --surface-1: #FFFFFF; --surface-2: #F2F2F2; --text-soft: #333333; }
 @layer base { * { @apply border-border outline-ring/50; } html { scroll-behavior: smooth; } body { margin: 0; background: var(--background); color: var(--foreground); font-family: "Space Grotesk", sans-serif; } h1, h2 { font-family: var(--display-font); } button, a { -webkit-tap-highlight-color: transparent; } button:focus-visible, a:focus-visible { outline: 2px solid var(--acid); outline-offset: 4px; } }
 .light-theme body, .light-theme .site-shell, .light-theme .section-dark, .light-theme .hero-readout, .light-theme .analysis-panel, .light-theme .loop-node { background: #FFFFFF; color: #000000; }
@@ -229,7 +229,7 @@
 .theme-toggle:hover { background: var(--acid); color: #000; transform: translateY(-2px); }
 .theme-toggle:active { transform: scale(.96); }
 .theme-toggle .mono { font-size: 8px; letter-spacing: .06em; }
-.dark .theme-toggle { box-shadow: 0 0 22px rgba(66,165,255,.12); }
+.dark .theme-toggle { box-shadow: 0 0 22px rgba(196,181,253,.12); }
 @media (max-width: 860px) { .theme-toggle { top: 88px; right: 18px; } }
 @media (prefers-reduced-motion: reduce) { .theme-toggle { transition: none; } }
 

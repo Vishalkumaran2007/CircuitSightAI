@@ -190,3 +190,8 @@
 
 - [x] Add rendered route-level theme contract tests for auth, workspace, dashboard, and learning surfaces.
 - [x] Capture explicit desktop/mobile verification evidence for representative authenticated and public screens.
+
+# Black Lavender Dark Theme
+
+- [x] Change dark-mode accents from electric blue to lavender while keeping the background black.
+- [x] Preserve the white-black light theme and verify both palettes across desktop/mobile, tests, and production build.

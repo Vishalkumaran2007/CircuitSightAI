@@ -16,8 +16,8 @@ export default function ThemeToggle() {
           toggleTheme();
         }
       }}
-      aria-label={darkMode ? "Switch to light white-black theme" : "Switch to dark black-blue theme"}
-      title={darkMode ? "Switch to light white-black theme" : "Switch to dark black-blue theme"}
+      aria-label={darkMode ? "Switch to light white-black theme" : "Switch to dark black-lavender theme"}
+      title={darkMode ? "Switch to light white-black theme" : "Switch to dark black-lavender theme"}
     >
       {darkMode ? <Sun size={15} /> : <Moon size={15} />}
       <span className="mono">{darkMode ? "LIGHT" : "DARK"}</span>
